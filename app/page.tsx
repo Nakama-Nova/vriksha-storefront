@@ -1,69 +1,89 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import Link from "next/link";
+import { Photo } from "@/components/Photo";
+import { ProductCard } from "@/components/ProductCard";
+import { getCatalog } from "@/lib/api";
 
-export default function Home() {
+export const revalidate = 60;
+
+const CRAFTS = [
+  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture" },
+  { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?category=Carvings" },
+  { title: "Custom orders", text: "Tell us what you need. We design and build it.", href: "/custom" },
+];
+
+export default async function Home() {
+  const products = await getCatalog();
+  const featured = (products ?? []).slice(0, 4);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <section className="hero">
+        <div className="wrap">
+          <div className="stack" style={{ gap: 22 }}>
+            <span className="eyebrow">Handcrafted wood furniture &amp; carvings</span>
+            <h1>Wood that remembers the hands that shaped it.</h1>
+            <p className="lead">Furniture for modern homes, finished with carving traditions from our ancestral craft.</p>
+            <div className="row">
+              <Link href="/shop" className="btn primary">
+                Shop furniture
+              </Link>
+              <Link href="/custom" className="btn outline">
+                Request a custom carving
+              </Link>
+            </div>
+          </div>
+          <Photo image={featured[0]?.images[0]} name="Featured piece" priority />
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <section className="section">
+        <div className="wrap stack" style={{ gap: 28 }}>
+          <h2>Shop by craft</h2>
+          <div className="cats">
+            {CRAFTS.map((c) => (
+              <Link key={c.title} href={c.href} className="card warm stack" style={{ textDecoration: "none" }}>
+                <h3>{c.title}</h3>
+                <p className="muted">{c.text}</p>
+                <span className="price">Browse →</span>
+              </Link>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="wrap stack" style={{ gap: 28 }}>
+          <div className="row between">
+            <h2>Featured pieces</h2>
+            <Link href="/shop" className="price">
+              View all →
+            </Link>
+          </div>
+          {products === null ? (
+            <div className="alert info">Our catalogue is loading slowly. Please refresh in a moment, or call us.</div>
+          ) : featured.length ? (
+            <div className="grid-products">
+              {featured.map((p) => (
+                <ProductCard key={p.slug} product={p} />
+              ))}
+            </div>
+          ) : (
+            <div className="alert info">New pieces are being photographed. Meanwhile, tell us what you would like made.</div>
+          )}
+        </div>
+      </section>
+
+      <section className="cta-band">
+        <div className="wrap">
+          <div className="stack">
+            <h2>Have a design in mind?</h2>
+            <p>Send us a sketch or a photo. We quote, you approve, we build.</p>
+          </div>
+          <Link href="/custom" className="btn gold">
+            Request a custom piece
+          </Link>
+        </div>
+      </section>
+    </>
   );
 }

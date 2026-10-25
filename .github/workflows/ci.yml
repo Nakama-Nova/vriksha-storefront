@@ -1,0 +1,28 @@
+name: Storefront CI
+
+on:
+  push:
+    branches: [ main, 'feature/*', 'ci/*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      # The build must work with no backend reachable: pages show a notice instead.
+      NEXT_PUBLIC_API_URL: http://127.0.0.1:9
+      NEXT_PUBLIC_SITE_URL: https://example.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type-check
+        run: npx tsc --noEmit
+      - name: Build
+        run: npm run build
