@@ -61,6 +61,10 @@ Import the repo, set the variables above, deploy. Add the Vercel/custom domain t
 - Reference-photo upload on the enquiry form
 - Online payments (waiting for the trade licence / GST registration)
 
+## Deploying
+
+The website deploys itself to Vercel (project `vriksha-beta-site`) after **Storefront CI passes on `main`**, through `.github/workflows/deploy.yml` (Vercel's own GitHub link cannot deploy a private organisation repo on the Hobby plan). You can also run it by hand: Actions, Deploy, Run workflow. Needs the repository secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`. The site's settings and `NEXT_PUBLIC_*` values are kept in the Vercel project, not in git. To undo a bad deploy, open the previous deployment in Vercel and Promote it to Production.
+
 ## Licence
 
 Proprietary software. Copyright (c) 2026 Nakama Nova, all rights reserved. It may not be copied, modified or shared; see `LICENSE`. Third-party packages keep their own licences.

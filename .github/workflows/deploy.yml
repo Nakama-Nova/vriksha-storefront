@@ -1,0 +1,68 @@
+name: Deploy
+
+# Continuous deployment of the website to Vercel.
+#
+# Vercel's own GitHub integration cannot deploy a private organisation repository
+# on the Hobby plan, so GitHub Actions deploys with the Vercel CLI instead. It runs
+# only after "Storefront CI" has passed on main (or by hand from the Actions tab).
+# The project's settings and NEXT_PUBLIC_* variables live in the Vercel project.
+#
+# Repository secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID.
+on:
+  workflow_run:
+    workflows: ["Storefront CI"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+# One deploy at a time; a newer push waits instead of cancelling a deploy halfway.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      SITE_URL: https://vriksha-beta-site.vercel.app
+
+    steps:
+      - name: Check the deploy settings
+        run: |
+          missing=""
+          for v in VERCEL_TOKEN VERCEL_ORG_ID VERCEL_PROJECT_ID; do
+            if [ -z "${!v}" ]; then missing="$missing $v"; fi
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing (see README, Deploying)"
+            exit 1
+          fi
+
+      # Deploy exactly the commit whose checks passed (not whatever main is by now).
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Deploy to Vercel (production)
+        run: npx --yes vercel@65.2.0 deploy --prod --yes --token "$VERCEL_TOKEN"
+
+      - name: Smoke test
+        run: |
+          for i in 1 2 3 4 5 6; do
+            if curl -fsSL "$SITE_URL/" | grep -q "Vriksha"; then
+              echo "The website is up."
+              exit 0
+            fi
+            echo "Not up yet (try $i)"; sleep 10
+          done
+          echo "::error::$SITE_URL did not answer. Roll back in Vercel (Deployments > the previous one > Promote)."
+          exit 1
