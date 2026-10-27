@@ -60,3 +60,7 @@ Import the repo, set the variables above, deploy. Add the Vercel/custom domain t
 - Logo image in the header (a gold circle stands in; needs a transparent PNG/SVG)
 - Reference-photo upload on the enquiry form
 - Online payments (waiting for the trade licence / GST registration)
+
+## Licence
+
+Proprietary software. Copyright (c) 2026 Nakama Nova, all rights reserved. It may not be copied, modified or shared; see `LICENSE`. Third-party packages keep their own licences.
