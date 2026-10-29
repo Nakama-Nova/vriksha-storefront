@@ -85,6 +85,9 @@ export default function PrivacyPage() {
       <h2>Children</h2>
       <p>This shop is for adults. If you are under 18, please ask a parent or guardian to place an order or send an enquiry for you.</p>
 
+      <h2>If the business changes hands</h2>
+      <p>If {SHOP.name} is ever sold or merged with another business, your details may pass to the new owner so that your orders can be looked after. They would have to treat them as this policy says.</p>
+
       <h2>Changes to this page</h2>
       <p>If we change how we use your details, we will update this page and its date. For a change that matters to you, we will also tell you where we can.</p>
     </LegalPage>

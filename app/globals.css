@@ -747,3 +747,9 @@ model-viewer {
 .legal-table th {
   font-weight: 600;
 }
+.faq summary {
+  cursor: pointer;
+}
+.faq[open] summary {
+  color: var(--brand, inherit);
+}

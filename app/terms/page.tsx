@@ -85,6 +85,9 @@ export default function TermsPage() {
       <h2>Law and disputes</h2>
       <p>These terms are governed by the laws of India. If something goes wrong, please talk to us first; we would like to put it right. If we cannot agree, you may use the consumer remedies the law gives you.</p>
 
+      <h2>If part of these terms cannot apply</h2>
+      <p>If a court finds any part of these terms cannot be enforced, the rest still applies. These terms, with our delivery, cancellations and refunds and privacy policies and what we confirm with you about your order, are the whole agreement between us about it.</p>
+
       <h2>Changes</h2>
       <p>We may update these terms. The version that applies to an order is the one on this page on the day you placed it.</p>
     </LegalPage>

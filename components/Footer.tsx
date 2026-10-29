@@ -39,6 +39,9 @@ export function Footer() {
                 <Link href="/about">About us</Link>
               </li>
               <li>
+                <Link href="/faq">Questions and answers</Link>
+              </li>
+              <li>
                 <Link href="/contact">Contact</Link>
               </li>
             </ul>
@@ -46,7 +49,7 @@ export function Footer() {
           <div>
             <h4>Policies</h4>
             <ul>
-              {POLICY_LINKS.map((l) => (
+              {POLICY_LINKS.filter((l) => l.href !== "/faq").map((l) => (
                 <li key={l.href}>
                   <Link href={l.href}>{l.label}</Link>
                 </li>

@@ -32,4 +32,5 @@ export const POLICY_LINKS = [
   { href: "/terms", label: "Terms of sale" },
   { href: "/delivery", label: "Delivery policy" },
   { href: "/refunds", label: "Cancellations and refunds" },
+  { href: "/faq", label: "Questions and answers" },
 ] as const;
