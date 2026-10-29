@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { ApiError, trackOrder, type PublicOrder } from "@/lib/api";
+import Link from "next/link";
 import { dateText, rupees } from "@/lib/format";
 
 // Order lifecycle (backend): draft -> confirmed -> in_production -> ready -> delivered
@@ -75,6 +76,7 @@ export function TrackForm() {
           {busy ? "Checking…" : "Track order"}
         </button>
       </form>
+      <p className="small muted">We use these only to find your order; see our <Link href="/privacy">privacy policy</Link>.</p>
 
       <div aria-live="polite">
         {error && (

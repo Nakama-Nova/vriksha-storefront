@@ -146,7 +146,9 @@ export function CheckoutForm() {
         <button type="submit" className="btn primary block" disabled={busy}>
           {busy ? "Placing order…" : "Place order"}
         </button>
-        <p className="small muted">By placing the order you agree that we will contact you to confirm the price and delivery date before any payment.</p>
+        <p className="small muted">
+          By placing the order you agree that we will contact you to confirm the price and delivery date before any payment. We use your details only for your order; see our <Link href="/privacy">privacy policy</Link>, <Link href="/terms">terms of sale</Link> and <Link href="/refunds">cancellations and refunds</Link>.
+        </p>
       </aside>
     </form>
   );

@@ -92,6 +92,9 @@ export function EnquiryForm() {
         <label htmlFor="budget">Budget (optional)</label>
         <input id="budget" name="budget" className="input" maxLength={100} placeholder="Approximate range in ₹" />
       </div>
+      <p className="small muted">
+        We use your details only to reply to you; see our <Link href="/privacy">privacy policy</Link>.
+      </p>
       <p className="small muted">Have photos or a sketch? Send them on WhatsApp after you submit and quote your reference number.</p>
       {error && (
         <div className="alert error" role="alert">
