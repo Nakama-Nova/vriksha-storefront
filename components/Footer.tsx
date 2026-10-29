@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PHONE, WHATSAPP } from "@/lib/config";
+import { POLICY_LINKS } from "@/lib/legal";
 
 export function Footer() {
   return (
@@ -40,6 +41,16 @@ export function Footer() {
               <li>
                 <Link href="/contact">Contact</Link>
               </li>
+            </ul>
+          </div>
+          <div>
+            <h4>Policies</h4>
+            <ul>
+              {POLICY_LINKS.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href}>{l.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
