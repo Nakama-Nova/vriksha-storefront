@@ -160,8 +160,26 @@ p {
 
 /* Wood-carving cut-outs: a shelf under the header, and carvings standing in the side margins */
 .shelf {
+  position: relative;
+  overflow: hidden;
   background: var(--warm);
   border-bottom: 3px solid var(--gold);
+}
+.shelf-corner {
+  position: absolute;
+  top: 0;
+  width: auto;
+  height: clamp(56px, 10vw, 112px);
+}
+.shelf-corner.left,
+.flip {
+  transform: scaleX(-1);
+}
+.shelf-corner.left {
+  left: 0;
+}
+.shelf-corner.right {
+  right: 0;
 }
 .shelf ul {
   list-style: none;
@@ -182,14 +200,11 @@ p {
 .side-art img {
   filter: drop-shadow(0 6px 8px rgba(42, 26, 16, 0.3));
 }
-.shelf img {
+.shelf li img {
   width: 100%;
   height: auto;
 }
 @media (max-width: 640px) {
-  .shelf li.extra {
-    display: none;
-  }
   .shelf ul {
     gap: 16px;
     padding-top: 10px;
@@ -597,11 +612,19 @@ model-viewer {
 }
 
 /* Cart / checkout layout */
+.two-col > * {
+  min-width: 0;
+}
 .two-col {
   display: grid;
   grid-template-columns: 1fr 400px;
   gap: 48px;
   align-items: start;
+}
+@media (min-width: 961px) {
+  .form-cols {
+    grid-template-columns: minmax(0, 1fr) 380px;
+  }
 }
 @media (max-width: 960px) {
   .two-col {

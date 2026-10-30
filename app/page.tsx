@@ -8,7 +8,7 @@ import { CARVINGS, type Carving } from "@/lib/art";
 export const revalidate = 60;
 
 const CRAFTS: { title: string; text: string; href: string; image: Carving }[] = [
-  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture", image: "wall-painted" },
+  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture", image: "furniture" },
   { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?category=Carvings", image: "ganesha-painted" },
   { title: "Custom orders", text: "Tell us what you need. We design and build it.", href: "/custom", image: "door" },
 ];
