@@ -167,11 +167,14 @@ p {
   list-style: none;
   margin: 0 auto;
   padding: 14px 20px 0;
-  max-width: var(--wrap);
+  box-sizing: content-box;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: clamp(24px, 6vw, 88px);
+  gap: 24px;
+}
+.shelf li {
+  min-width: 0;
 }
 .shelf img,
 .hero-art img,
@@ -180,27 +183,41 @@ p {
   filter: drop-shadow(0 6px 8px rgba(42, 26, 16, 0.3));
 }
 .shelf img {
-  height: clamp(100px, 13vw, 160px);
-  width: auto;
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 640px) {
+  .shelf li.extra {
+    display: none;
+  }
+  .shelf ul {
+    gap: 16px;
+    padding-top: 10px;
+  }
 }
 .side-art {
   display: none;
 }
-@media (min-width: 1500px) {
+/* Margins beside the 1200px column; carvings stand against the column and only show where there is room */
+@media (min-width: 1400px) {
+  :root {
+    --margin: calc((100vw - var(--wrap)) / 2);
+    --side-w: min(300px, calc(var(--margin) - 36px));
+  }
   .side-art {
     display: block;
     position: fixed;
     bottom: 20px;
-    width: min(300px, calc((100vw - var(--wrap)) / 2 - 36px));
+    width: var(--side-w);
     height: min(74vh, 780px);
     pointer-events: none;
     z-index: 1;
   }
   .side-art.left {
-    left: 18px;
+    left: max(18px, calc(var(--margin) - var(--side-w) - 18px));
   }
   .side-art.right {
-    right: 18px;
+    right: max(18px, calc(var(--margin) - var(--side-w) - 18px));
   }
 }
 @media print {

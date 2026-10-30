@@ -25,6 +25,9 @@ const SIDES = {
   ganesha: ["ganesha-dark", "ganesha-painted"],
 } as const satisfies Record<string, readonly [Carving, Carving]>;
 
+/** Width of a carving relative to its height. */
+export const aspect = (name: Carving) => CARVINGS[name][0] / CARVINGS[name][1];
+
 type Art = { shelf: readonly Carving[]; side: keyof typeof SIDES };
 
 const ROUTES: [string, Art][] = [
