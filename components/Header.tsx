@@ -21,6 +21,9 @@ export function Header() {
 
   return (
     <header className="header">
+      {(["left", "right"] as const).map((edge) => (
+        <Image key={edge} src="/carvings/bracket.webp" alt="" width={1000} height={852} priority className={`corner-bracket ${edge}`} aria-hidden="true" />
+      ))}
       <div className="wrap">
         <Link href="/" className="logo" aria-label="Vriksha Studio home">
           <Image src="/brand/logo.png" alt="Vriksha Studio" width={641} height={864} priority className="logo-img" />

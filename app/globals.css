@@ -165,21 +165,8 @@ p {
   background: var(--warm);
   border-bottom: 3px solid var(--gold);
 }
-.shelf-corner {
-  position: absolute;
-  top: 0;
-  width: auto;
-  height: clamp(56px, 10vw, 112px);
-}
-.shelf-corner.left,
 .flip {
   transform: scaleX(-1);
-}
-.shelf-corner.left {
-  left: 0;
-}
-.shelf-corner.right {
-  right: 0;
 }
 .shelf ul {
   list-style: none;
@@ -260,6 +247,38 @@ p {
   color: var(--brown);
   text-decoration: none;
   white-space: nowrap;
+}
+/* Carved brackets hang from the top corners of every page; header content keeps clear of them */
+.header {
+  --bw: clamp(36px, 6.4vw, 89px);
+}
+.corner-bracket {
+  position: absolute;
+  top: 0;
+  width: var(--bw);
+  height: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 5px rgba(42, 26, 16, 0.3));
+}
+.corner-bracket.left {
+  left: 0;
+  transform: scaleX(-1);
+}
+.corner-bracket.right {
+  right: 0;
+}
+@media (max-width: 1399px) {
+  .header .wrap {
+    padding-inline: max(20px, calc(var(--bw) + 8px - max(0px, calc((100vw - var(--wrap)) / 2))));
+  }
+}
+@media (max-width: 359px) {
+  .corner-bracket {
+    display: none;
+  }
+  .header .wrap {
+    padding-inline: 20px;
+  }
 }
 .header .wrap > .row {
   flex-wrap: nowrap;

@@ -31,11 +31,10 @@ const facing = (edge: Carving, god: Carving): Piece[] => [{ name: edge }, { name
 /** Margin carvings: the same carving each side, facing the page. */
 const flank = (name: Carving): [Piece, Piece] => [{ name }, { name, flip: true }];
 
-type Art = { shelf: readonly Piece[]; corners?: Carving; side: [Piece, Piece] };
+type Art = { shelf: readonly Piece[]; side: [Piece, Piece] };
 
 const ROUTES: [string, Art][] = [
-  // Corner brackets with the Marapachi set between them
-  ["/shop", { shelf: [{ name: "dolls" }], corners: "bracket", side: flank("yali-dark") }],
+  ["/shop", { shelf: [{ name: "dolls" }], side: flank("yali-dark") }],
   ["/custom", { shelf: facing("horse-painted", "ganesha-painted"), side: flank("yali-painted") }],
   ["/about", { shelf: facing("yali-dark", "balaji"), side: flank("horse-dark") }],
   ["/contact", { shelf: facing("horse-dark", "ganesha-painted"), side: flank("yali-dark") }],

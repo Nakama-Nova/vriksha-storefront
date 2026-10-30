@@ -13,24 +13,13 @@ const MAX_HEIGHT = 160; // px, tallest a carving gets on a big screen
  * screen, and the row is capped so they never grow past MAX_HEIGHT. Carvings at the ends face inward.
  */
 export function PageBanner() {
-  const { shelf, corners } = artFor(usePathname());
+  const { shelf } = artFor(usePathname());
   if (!shelf.length) return null;
 
   const maxWidth = shelf.reduce((w, { name }) => w + aspect(name) * MAX_HEIGHT, 0) + GAP * (shelf.length - 1);
 
   return (
     <div className="shelf" aria-hidden="true">
-      {corners &&
-        (["left", "right"] as const).map((edge) => (
-          <Image
-            key={edge}
-            src={`/carvings/${corners}.webp`}
-            alt=""
-            width={CARVINGS[corners][0]}
-            height={CARVINGS[corners][1]}
-            className={`shelf-corner ${edge}`}
-          />
-        ))}
       <ul style={{ maxWidth }}>
         {shelf.map(({ name, flip }, i) => (
           <li key={i} style={{ flexGrow: aspect(name), flexBasis: 0 }}>
