@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Photo } from "@/components/Photo";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalog } from "@/lib/api";
 import { CARVINGS, type Carving } from "@/lib/art";
@@ -34,14 +33,11 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          {featured[0]?.images[0] ? (
-            <Photo image={featured[0].images[0]} name="Featured piece" priority />
-          ) : (
-            <div className="hero-art">
-              <Image src="/carvings/balaji.webp" alt="Lord Balaji carved in wood" width={440} height={1000} priority />
-              <Image src="/carvings/ganesha-painted.webp" alt="Painted Ganesha wood carving" width={489} height={1000} priority />
-            </div>
-          )}
+          {/* Always the carvings: product photos belong in "Featured pieces" below, not here. */}
+          <div className="hero-art">
+            <Image src="/carvings/balaji.webp" alt="Lord Balaji carved in wood" width={440} height={1000} priority />
+            <Image src="/carvings/ganesha-painted.webp" alt="Painted Ganesha wood carving" width={489} height={1000} priority />
+          </div>
         </div>
       </section>
 
