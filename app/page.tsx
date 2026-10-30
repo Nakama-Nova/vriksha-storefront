@@ -1,14 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Photo } from "@/components/Photo";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalog } from "@/lib/api";
+import { CARVINGS, type Carving } from "@/lib/art";
 
 export const revalidate = 60;
 
-const CRAFTS = [
-  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture" },
-  { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?category=Carvings" },
-  { title: "Custom orders", text: "Tell us what you need. We design and build it.", href: "/custom" },
+const CRAFTS: { title: string; text: string; href: string; image: Carving }[] = [
+  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture", image: "wall-painted" },
+  { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?category=Carvings", image: "ganesha-painted" },
+  { title: "Custom orders", text: "Tell us what you need. We design and build it.", href: "/custom", image: "door" },
 ];
 
 export default async function Home() {
@@ -32,7 +34,14 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          <Photo image={featured[0]?.images[0]} name="Featured piece" priority />
+          {featured[0]?.images[0] ? (
+            <Photo image={featured[0].images[0]} name="Featured piece" priority />
+          ) : (
+            <div className="hero-art">
+              <Image src="/carvings/balaji.webp" alt="Lord Balaji carved in wood" width={440} height={1000} priority />
+              <Image src="/carvings/ganesha-painted.webp" alt="Painted Ganesha wood carving" width={489} height={1000} priority />
+            </div>
+          )}
         </div>
       </section>
 
@@ -42,6 +51,9 @@ export default async function Home() {
           <div className="cats">
             {CRAFTS.map((c) => (
               <Link key={c.title} href={c.href} className="card warm stack" style={{ textDecoration: "none" }}>
+                <div className="card-img" aria-hidden="true">
+                  <Image src={`/carvings/${c.image}.webp`} alt="" width={CARVINGS[c.image][0]} height={CARVINGS[c.image][1]} />
+                </div>
                 <h3>{c.title}</h3>
                 <p className="muted">{c.text}</p>
                 <span className="price">Browse →</span>

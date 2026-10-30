@@ -153,24 +153,61 @@ p {
   gap: 10px;
   text-decoration: none;
 }
-.logo-mark {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--gold);
+.logo-img {
+  height: 56px;
+  width: auto;
 }
-.logo-name {
-  font-family: var(--heading);
-  font-weight: 700;
-  font-size: 1.9rem;
-  color: var(--brown);
-  line-height: 1;
+
+/* Wood-carving cut-outs: a shelf under the header, and carvings standing in the side margins */
+.shelf {
+  background: var(--warm);
+  border-bottom: 3px solid var(--gold);
 }
-.logo-sub {
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  color: var(--brown);
-  font-weight: 500;
+.shelf ul {
+  list-style: none;
+  margin: 0 auto;
+  padding: 14px 20px 0;
+  max-width: var(--wrap);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: clamp(24px, 6vw, 88px);
+}
+.shelf img,
+.hero-art img,
+.card-img img,
+.side-art img {
+  filter: drop-shadow(0 6px 8px rgba(42, 26, 16, 0.3));
+}
+.shelf img {
+  height: clamp(100px, 13vw, 160px);
+  width: auto;
+}
+.side-art {
+  display: none;
+}
+@media (min-width: 1500px) {
+  .side-art {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    width: min(300px, calc((100vw - var(--wrap)) / 2 - 36px));
+    height: min(74vh, 780px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  .side-art.left {
+    left: 18px;
+  }
+  .side-art.right {
+    right: 18px;
+  }
+}
+@media print {
+  .shelf,
+  .side-art {
+    display: none;
+  }
 }
 .nav {
   display: flex;
@@ -417,6 +454,28 @@ p {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 24px;
+}
+.card-img {
+  height: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+.card-img img {
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+.hero-art {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 28px;
+}
+.hero-art img {
+  height: clamp(300px, 40vw, 460px);
+  width: auto;
 }
 .cta-band {
   background: var(--brown);
@@ -701,6 +760,16 @@ model-viewer {
 }
 .footer a:hover {
   text-decoration: underline;
+}
+.footer-logo {
+  align-self: flex-start;
+  background: var(--warm);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+}
+.footer-logo img {
+  height: 84px;
+  width: auto;
 }
 .footer .brand-name {
   font-family: var(--heading);

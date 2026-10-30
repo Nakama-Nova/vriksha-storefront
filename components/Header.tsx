@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -22,10 +23,7 @@ export function Header() {
     <header className="header">
       <div className="wrap">
         <Link href="/" className="logo" aria-label="Vriksha Studio home">
-          {/* Replace with the logo image once a transparent PNG/SVG exists */}
-          <span className="logo-mark" aria-hidden="true" />
-          <span className="logo-name">Vriksha</span>
-          <span className="logo-sub">STUDIO</span>
+          <Image src="/brand/logo.png" alt="Vriksha Studio" width={641} height={864} priority className="logo-img" />
         </Link>
         <nav className={`nav${open ? " open" : ""}`} aria-label="Main">
           {LINKS.map((l) => (
