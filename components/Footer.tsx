@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PHONE, WHATSAPP } from "@/lib/config";
 import { POLICY_LINKS } from "@/lib/legal";
@@ -7,6 +8,9 @@ export function Footer() {
     <footer className="footer">
       <div className="wrap">
         <div className="stack" style={{ maxWidth: 320 }}>
+          <span className="footer-logo">
+            <Image src="/brand/logo.png" alt="Vriksha Studio" width={641} height={864} />
+          </span>
           <span className="brand-name">Vriksha Studio</span>
           <p className="small">Wood furniture and carved art, made in our own workshops.</p>
           {(PHONE || WHATSAPP) && <p className="small">{PHONE || `WhatsApp +${WHATSAPP}`}</p>}

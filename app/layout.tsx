@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { PageBanner } from "@/components/PageBanner";
+import { SideArt } from "@/components/SideArt";
 import { SITE_URL } from "@/lib/config";
 import "./globals.css";
 
@@ -23,6 +25,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <div className="announce">Handcrafted wood furniture &amp; carvings · Custom orders welcome</div>
         <Header />
+        <PageBanner />
+        <SideArt />
         <main id="main">{children}</main>
         <Footer />
       </body>

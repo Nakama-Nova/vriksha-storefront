@@ -26,7 +26,7 @@ export default function CustomPage() {
         </div>
       </section>
       <section className="section">
-        <div className="wrap two-col" style={{ gridTemplateColumns: "minmax(0, 1fr) 380px" }}>
+        <div className="wrap two-col form-cols">
           <EnquiryForm />
           <aside className="card warm stack" aria-label="How it works">
             <h2 style={{ fontSize: "1.8rem" }}>How it works</h2>
