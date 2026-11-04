@@ -12,6 +12,8 @@ The public website for Vriksha Studio: wood furniture and carvings. Next.js (App
 | `/custom` | Custom-piece enquiry |
 | `/track` | Order status by order number **and** phone (the phone is never put in a URL) |
 | `/contact` | Phone / WhatsApp |
+| `/about` | The shop's story |
+| `/privacy`, `/cookies`, `/terms`, `/delivery`, `/refunds`, `/faq` | Policy and questions-and-answers pages. The shop's facts and numbers live in `lib/legal.ts`; they are sensible defaults for a made-to-order wood shop, so the owner should confirm each one and have a lawyer read the pages before relying on them |
 
 **No online payment yet.** Checkout creates a draft order; staff confirm by phone and the customer pays an advance by UPI. Prices are always set by the server, never by the browser.
 
@@ -23,7 +25,9 @@ npm install
 npm run dev                     # http://localhost:3000
 ```
 
-Checks: `npm run lint`, `npx tsc --noEmit`, `npm run build`.
+Checks: `npm run lint`, `npx next typegen` then `npx tsc --noEmit`, `npm run build`. Storefront CI (`.github/workflows/ci.yml`) runs the same four steps on Node 22, with no backend reachable, so the build must work without one.
+
+This project uses a recent Next.js with breaking changes from older versions (see `AGENTS.md`); read the guide in `node_modules/next/dist/docs/` before changing framework-level code.
 
 ### Settings (`.env.local`)
 
@@ -34,6 +38,8 @@ Checks: `npm run lint`, `npx tsc --noEmit`, `npm run build`.
 | `NEXT_PUBLIC_WHATSAPP` | Shop WhatsApp number (digits). Empty: product pages link to the enquiry form instead |
 | `NEXT_PUBLIC_PHONE` | Shown in the footer and on `/contact` |
 | `NEXT_PUBLIC_UPI_ID` | Fallback only. The UPI id is read from the backend (`PAY_UPI_ID`, `/public/payment-info`); this is used if that call fails |
+| `NEXT_PUBLIC_EMAIL` | Contact email on the policy pages (defaults to `info@vrikshastudios.com`) |
+| `NEXT_PUBLIC_ADDRESS` | Workshop address on the policy pages. Left out until set |
 
 ### Backend settings this site needs
 
@@ -48,23 +54,19 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 
 - Server components fetch the catalogue with a 60-second cache, so pages are fast and a price change shows within a minute. If the backend is down, pages show a notice instead of failing (the build also works with no backend).
 - The cart is in `localStorage` (`lib/cart.tsx`, via `useSyncExternalStore`).
-- Brand colours and fonts come from `nakamadesk-backend/docs/brand/design-tokens.json`, as CSS variables in `app/globals.css`.
+- Brand colours and fonts come from `nakamadesk-backend/docs/brand/design-tokens.json`, as CSS variables in `app/globals.css`. The logo and carving cut-outs are in `public/brand` and `public/carvings`.
 - Photos come from the backend's `/media`; the site uses plain `<img>` (they are already sized by staff).
 - This project turns off Next 16's Cache Components (`next.config.ts`) and uses classic revalidating `fetch`.
 
-## Deploy (Vercel)
-
-Import the repo, set the variables above, deploy. Add the Vercel/custom domain to the backend's `CORS_ORIGINS`.
-
 ## Not built yet
 
-- Logo image in the header (a gold circle stands in; needs a transparent PNG/SVG)
-- Reference-photo upload on the enquiry form
+- Reference-photo upload on the enquiry form (for now the form tells people to send photos on WhatsApp with their reference number)
+- Customer accounts on the site (the backend has them under `/account`; the site still uses guest checkout)
 - Online payments (waiting for the trade licence / GST registration)
 
-## Deploying
+## Deploy (Vercel)
 
-The website deploys itself to Vercel (project `vriksha-beta-site`) after **Storefront CI passes on `main`**, through `.github/workflows/deploy.yml` (Vercel's own GitHub link cannot deploy a private organisation repo on the Hobby plan). You can also run it by hand: Actions, Deploy, Run workflow. Needs the repository secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`. The site's settings and `NEXT_PUBLIC_*` values are kept in the Vercel project, not in git. To undo a bad deploy, open the previous deployment in Vercel and Promote it to Production.
+Set the variables above in the Vercel project, and add the site's address to the backend's `CORS_ORIGINS`. The website deploys itself to Vercel (project `vriksha-beta-site`) after **Storefront CI passes on `main`**, through `.github/workflows/deploy.yml` (Vercel's own GitHub link cannot deploy a private organisation repo on the Hobby plan). You can also run it by hand: Actions, Deploy, Run workflow. Needs the repository secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`. The site's settings and `NEXT_PUBLIC_*` values are kept in the Vercel project, not in git. To undo a bad deploy, open the previous deployment in Vercel and Promote it to Production.
 
 ## Licence
 
