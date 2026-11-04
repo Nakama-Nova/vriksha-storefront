@@ -17,7 +17,7 @@ export function AddToCart({ product }: { product: Product }) {
       slug: product.slug,
       name: product.name,
       price: Number(product.price),
-      image: product.images[0] ? mediaUrl(product.images[0].url) : null,
+      image: (product.images[0] ?? product.renders[0]) ? mediaUrl((product.images[0] ?? product.renders[0]).url) : null,
       madeToOrder: product.made_to_order,
       leadTimeDays: product.lead_time_days,
     }, qty);

@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useSyncExternalStore } from "react";
-import type { PublicOrder } from "@/lib/api";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { getPaymentInfo, type PaymentInfo, type PublicOrder } from "@/lib/api";
 import { UPI_ID } from "@/lib/config";
 import { rupees } from "@/lib/format";
 import { LAST_ORDER_KEY } from "./CheckoutForm";
@@ -28,6 +28,14 @@ export function ThanksView() {
       return null;
     }
   }, [raw]);
+
+  // The shop's UPI id comes from the backend; the env value is only a fallback.
+  const [pay, setPay] = useState<PaymentInfo | null>(null);
+  useEffect(() => {
+    getPaymentInfo().then(setPay, () => {});
+  }, []);
+  const upiId = pay?.upi_id || UPI_ID;
+  const cash = pay?.accepts.includes("cash");
 
   if (raw === undefined) return null;
   const first = order?.name?.split(" ")[0];
@@ -62,12 +70,13 @@ export function ThanksView() {
             <li>
               <span className="num">2</span>
               <span>
-                <strong>You pay the advance by UPI</strong>
+                <strong>You pay the advance{cash ? " by cash or UPI" : " by UPI"}</strong>
                 <br />
                 <span className="muted small">
-                  {UPI_ID ? (
+                  {upiId ? (
                     <>
-                      Pay to <strong>{UPI_ID}</strong> and tell us. We note it against your order.
+                      Pay to <strong>{upiId}</strong>
+                      {pay?.payee_name ? ` (${pay.payee_name})` : ""}, quoting your order number{cash ? ", or pay cash at the shop" : ""}. We note it against your order.
                     </>
                   ) : (
                     "We will share the UPI details when we call you."

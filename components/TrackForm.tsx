@@ -121,6 +121,11 @@ export function TrackForm() {
               </>
             )}
           </div>
+          {order.upi_link && (
+            <a className="btn primary" href={order.upi_link} style={{ alignSelf: "flex-start" }}>
+              Pay by UPI
+            </a>
+          )}
           <p className="small muted">Questions? Call or WhatsApp us and quote your order number.</p>
         </div>
       )}
