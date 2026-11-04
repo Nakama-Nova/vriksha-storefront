@@ -37,7 +37,7 @@ This project uses a recent Next.js with breaking changes from older versions (se
 | `NEXT_PUBLIC_SITE_URL` | This site's public address |
 | `NEXT_PUBLIC_WHATSAPP` | Shop WhatsApp number (digits). Empty: product pages link to the enquiry form instead |
 | `NEXT_PUBLIC_PHONE` | Shown in the footer and on `/contact` |
-| `NEXT_PUBLIC_UPI_ID` | Shown after checkout. Empty: "we will share the UPI details" |
+| `NEXT_PUBLIC_UPI_ID` | Fallback only. The UPI id is read from the backend (`PAY_UPI_ID`, `/public/payment-info`); this is used if that call fails |
 | `NEXT_PUBLIC_EMAIL` | Contact email on the policy pages (defaults to `info@vrikshastudios.com`) |
 | `NEXT_PUBLIC_ADDRESS` | Workshop address on the policy pages. Left out until set |
 
@@ -47,6 +47,7 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 
 - `CORS_ORIGINS` to this site's address (e.g. `https://yourshop.in`)
 - `DELIVERY_PINCODES` to the pincodes you deliver to
+- `PAY_UPI_ID` (and optionally `PAY_UPI_NAME`, `PAY_PHONE`): shown after checkout, and the "Pay by UPI" button on tracking once an order is confirmed
 - run uvicorn with `--proxy-headers` behind your proxy
 
 ## How it is built

@@ -8,6 +8,7 @@ export type Image = { url: string; alt: string | null };
 export type Product = {
   slug: string;
   name: string;
+  item_type: string; // "furniture" or "sculpture"
   short_desc: string | null;
   price: string; // decimal string, e.g. "18500.00"
   made_to_order: boolean;
@@ -17,6 +18,7 @@ export type Product = {
   dimensions_mm: { l?: number; w?: number; h?: number } | null;
   category: string | null;
   images: Image[];
+  renders: Image[]; // finished-piece render pictures
   model_url: string | null;
 };
 
@@ -31,6 +33,7 @@ export type PublicOrder = {
   total: string;
   advance_paid: string;
   balance_due: string;
+  upi_link: string | null; // opens a UPI app; only once staff confirmed and money is due
   items: OrderLine[];
 };
 
@@ -115,6 +118,15 @@ const JSON_POST = (body: unknown): RequestInit => ({
 
 export const checkDelivery = (pincode: string) =>
   request<{ pincode: string; serviceable: boolean }>(`/public/delivery-check?pincode=${encodeURIComponent(pincode)}`, NO_STORE);
+
+export type PaymentInfo = {
+  accepts: string[]; // "cash", "upi"
+  upi_id: string | null;
+  payee_name: string | null;
+  phone: string | null;
+  steps: string;
+};
+export const getPaymentInfo = () => request<PaymentInfo>("/public/payment-info", NO_STORE);
 
 export type CheckoutInput = {
   name: string;

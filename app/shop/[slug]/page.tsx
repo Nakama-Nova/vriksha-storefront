@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
+import { DeliveryCheck } from "@/components/DeliveryCheck";
 import { ProductGallery } from "@/components/ProductGallery";
 import { getProduct, mediaUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
@@ -16,7 +17,7 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
   return {
     title: p.name,
     description: p.short_desc ?? `${p.name}, handcrafted by Vriksha Studio.`,
-    openGraph: { images: p.images[0] ? [mediaUrl(p.images[0].url)] : undefined },
+    openGraph: { images: p.images[0] ?? p.renders[0] ? [mediaUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
   };
 }
 
@@ -27,6 +28,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
 
   const size = sizeText(p.dimensions_mm);
   const specs: [string, string][] = [];
+  specs.push(["Type", p.item_type === "sculpture" ? "Sculpture" : "Furniture"]);
   if (p.wood_type) specs.push(["Wood", p.wood_type]);
   if (size) specs.push(["Size", size]);
   if (p.category) specs.push(["Category", p.category]);
@@ -38,7 +40,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
     "@type": "Product",
     name: p.name,
     description: p.short_desc ?? undefined,
-    image: p.images.map((i) => mediaUrl(i.url)),
+    image: [...p.images, ...p.renders].map((i) => mediaUrl(i.url)),
     offers: {
       "@type": "Offer",
       priceCurrency: "INR",
@@ -55,7 +57,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
           <Link href="/">Home</Link> / <Link href="/shop">Shop</Link> / {p.name}
         </p>
         <div className="product">
-          <ProductGallery images={p.images} modelUrl={p.model_url} name={p.name} />
+          <ProductGallery images={[...p.images, ...p.renders]} modelUrl={p.model_url} name={p.name} />
           <div className="stack" style={{ gap: 20 }}>
             {p.made_to_order && (
               <span className="chip" style={{ alignSelf: "flex-start" }}>
@@ -65,17 +67,34 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
             <h1 style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>{p.name}</h1>
             <p style={{ fontSize: "1.8rem", fontWeight: 600, color: "var(--brown)" }}>{rupees(p.price)}</p>
             {p.short_desc && <p className="muted">{p.short_desc}</p>}
-            {specs.length > 0 && (
-              <dl className="specs" style={{ margin: 0 }}>
-                {specs.map(([k, v]) => (
-                  <div key={k}>
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            )}
             <AddToCart product={p} />
+            <DeliveryCheck />
+            <div className="stack" style={{ gap: 10 }}>
+              <details className="card faq" open>
+                <summary>
+                  <strong>Specifications</strong>
+                </summary>
+                <dl className="specs" style={{ margin: "10px 0 0" }}>
+                  {specs.map(([k, v]) => (
+                    <div key={k}>
+                      <dt>{k}</dt>
+                      <dd>{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="small muted" style={{ marginTop: 10 }}>
+                  Wood is a natural material, so grain and colour differ from piece to piece.
+                </p>
+              </details>
+              <details className="card faq">
+                <summary>
+                  <strong>Shipping and returns</strong>
+                </summary>
+                <p className="small" style={{ marginTop: 10 }}>
+                  Delivery by our own team in our area; see <Link href="/delivery">delivery</Link> and <Link href="/refunds">cancellations and refunds</Link>.
+                </p>
+              </details>
+            </div>
             {ask ? (
               <a className="btn outline" href={ask} target="_blank" rel="noopener noreferrer">
                 Ask on WhatsApp
