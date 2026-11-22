@@ -4,9 +4,11 @@ import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
 import { DeliveryCheck } from "@/components/DeliveryCheck";
 import { ProductGallery } from "@/components/ProductGallery";
-import { getProduct, mediaUrl } from "@/lib/api";
+import { ProductCard } from "@/components/ProductCard";
+import { getCatalog, getProduct, mediaUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { rupees, sizeText } from "@/lib/format";
+import { relatedTo } from "@/lib/shop";
 
 export const revalidate = 60;
 
@@ -23,8 +25,9 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
 
 export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
   const { slug } = await props.params;
-  const p = await getProduct(slug);
+  const [p, catalog] = await Promise.all([getProduct(slug), getCatalog()]);
   if (!p) notFound();
+  const related = catalog ? relatedTo(p, catalog) : [];
 
   const size = sizeText(p.dimensions_mm);
   const specs: [string, string][] = [];
@@ -109,6 +112,16 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
             </div>
           </div>
         </div>
+        {related.length > 0 && (
+          <div className="related stack" style={{ gap: 20, marginTop: 24 }}>
+            <h2>More like this</h2>
+            <div className="grid-products">
+              {related.map((r) => (
+                <ProductCard key={r.slug} product={r} />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

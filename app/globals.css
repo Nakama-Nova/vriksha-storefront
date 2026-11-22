@@ -989,3 +989,38 @@ model-viewer {
 .footer .alert.error {
   margin-top: 8px;
 }
+
+/* Shop toolbar */
+.shop-tools {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.3fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+@media (max-width: 900px) {
+  .shop-tools {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .shop-tools {
+    grid-template-columns: 1fr;
+  }
+}
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--brown);
+}
+
+/* More like this */
+.related h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
