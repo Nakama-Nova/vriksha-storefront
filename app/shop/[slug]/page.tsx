@@ -5,7 +5,7 @@ import { AddToCart } from "@/components/AddToCart";
 import { DeliveryCheck } from "@/components/DeliveryCheck";
 import { ProductGallery } from "@/components/ProductGallery";
 import { ProductCard } from "@/components/ProductCard";
-import { getCatalog, getProduct, mediaUrl } from "@/lib/api";
+import { getCatalog, getProduct, mediaUrl, shareImageUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { rupees, sizeText } from "@/lib/format";
 import { relatedTo } from "@/lib/shop";
@@ -19,7 +19,7 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
   return {
     title: p.name,
     description: p.short_desc ?? `${p.name}, handcrafted by Vriksha Studio.`,
-    openGraph: { images: p.images[0] ?? p.renders[0] ? [mediaUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
+    openGraph: { images: p.images[0] ?? p.renders[0] ? [shareImageUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
   };
 }
 

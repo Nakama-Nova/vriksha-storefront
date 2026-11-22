@@ -84,7 +84,7 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 - Server components fetch the catalogue with a 60-second cache, so pages are fast and a price change shows within a minute. If the backend is down, pages show a notice instead of failing (the build also works with no backend).
 - The cart is in `localStorage` (`lib/cart.tsx`, via `useSyncExternalStore`).
 - Brand colours and fonts come from `nakamadesk-backend/docs/brand/design-tokens.json`, as CSS variables in `app/globals.css`. The logo and carving cut-outs are in `public/brand` and `public/carvings`.
-- Photos come from the backend's `/media`; the site uses plain `<img>` (they are already sized by staff).
+- Photos come from the backend's `/media`. Staff upload full-size photos (about 1 MB each), so `components/Photo.tsx` shows them through `next/image`, which sends a resized WebP of the size each screen needs (a phone downloads a small copy, not the original). Each place a photo is shown passes a `sizes` value that says how wide it is there; keep it in step with the layout. Only the backend host set in `NEXT_PUBLIC_API_URL`, under `/media/`, may be optimised (`images` in `next.config.ts`); a photo from anywhere else is shown as it is. The backend names each photo by its content hash and caches it for a year, so optimised copies are cached as long too, and a replaced photo shows straight away. Product link previews (WhatsApp, Facebook) use a 640 px copy (`shareImageUrl` in `lib/api.ts`). On Vercel, image optimisation has a monthly allowance by plan, which a small catalogue stays well inside.
 - This project turns off Next 16's Cache Components (`next.config.ts`) and uses classic revalidating `fetch`.
 
 ## Not built yet

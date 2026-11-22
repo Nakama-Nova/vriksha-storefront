@@ -1,7 +1,7 @@
 // Client for the public website API (nakamadesk-backend /public/*).
 // Server components call it with caching; the browser calls it fresh.
 
-import { API_URL } from "./config";
+import { API_URL, SITE_URL } from "./config";
 
 export type Image = { url: string; alt: string | null };
 
@@ -48,6 +48,21 @@ export class ApiError extends Error {
 
 /** Backend media paths are relative ("/media/..."); make them absolute. */
 export const mediaUrl = (path: string) => (path.startsWith("http") ? path : `${API_URL}${path}`);
+
+/**
+ * A smaller copy of a photo for link previews (WhatsApp, Facebook, search results). The original is about 1 MB,
+ * and WhatsApp skips the preview picture when it is much over 300 KB. This is this site's own image optimiser
+ * (see `images` in next.config.ts), so it only works for photos from the shop's server; any other address is
+ * returned as it is. The width and quality must be ones next/image allows: 640 is a default width, 75 the default quality.
+ *
+ * The optimiser answers in WebP only when the caller says it accepts WebP; a crawler that sends `Accept: star/star`
+ * gets a PNG, which is larger (still far smaller than the original). That is why the width is small: 640 is plenty
+ * for a preview card. If previews still do not show in WhatsApp, the fix is a ready-made JPEG under 300 KB from the backend.
+ */
+export function shareImageUrl(path: string): string {
+  const src = mediaUrl(path);
+  return src.startsWith(`${API_URL}/media/`) ? `${SITE_URL}/_next/image?url=${encodeURIComponent(src)}&w=640&q=75` : src;
+}
 
 /** FastAPI errors: {detail: "text"} or {detail: [{msg, loc}]} for validation. */
 function messageFrom(body: unknown, status: number): string {

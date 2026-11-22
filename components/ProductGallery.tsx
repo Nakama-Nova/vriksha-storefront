@@ -33,7 +33,8 @@ export function ProductGallery({ images, modelUrl, name }: { images: Image[]; mo
           />
         </>
       ) : (
-        <Photo image={images[index]} name={name} priority />
+        // Half the page next to the details, the full width once they stack (860px and below)
+        <Photo image={images[index]} name={name} sizes="(max-width: 860px) 100vw, 560px" priority />
       )}
 
       {(images.length > 1 || modelUrl) && (
@@ -50,7 +51,7 @@ export function ProductGallery({ images, modelUrl, name }: { images: Image[]; mo
                 setShow3d(false);
               }}
             >
-              <Photo image={img} name={name} />
+              <Photo image={img} name={name} sizes="84px" placeholder="" />
             </button>
           ))}
           {modelUrl && (
