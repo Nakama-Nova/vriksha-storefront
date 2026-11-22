@@ -1241,6 +1241,24 @@ model-viewer {
   }
 }
 
+.buybar-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.3;
+}
+.buybar-info .small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.buybar .btn {
+  flex: none;
+  white-space: nowrap;
+  padding-inline: 20px;
+}
+
 /* WhatsApp: shown only once the shop's number is set */
 .wa-float {
   position: fixed;

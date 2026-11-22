@@ -18,7 +18,8 @@ export function AddToCart({ product }: { product: Product }) {
   useEffect(() => {
     const btn = mainButton.current;
     if (!btn) return;
-    const seen = new IntersectionObserver(([e]) => setPassed(!e.isIntersecting && e.boundingClientRect.top < 0));
+    // The sticky header covers the top ~90px, so count the button as gone once it slides under it
+    const seen = new IntersectionObserver(([e]) => setPassed(!e.isIntersecting && e.boundingClientRect.top < 120), { rootMargin: "-90px 0px 0px 0px" });
     seen.observe(btn);
     const footer = document.querySelector("footer");
     const end = new IntersectionObserver(([e]) => setAtEnd(e.isIntersecting));
@@ -88,8 +89,8 @@ export function AddToCart({ product }: { product: Product }) {
       </div>
       {/* On phones, keep the buy button in reach once the main one has scrolled away */}
       <div className={`buybar${passed && !atEnd ? " show" : ""}`} aria-hidden={!(passed && !atEnd)}>
-        <span className="stack" style={{ gap: 0 }}>
-          <span className="small muted">{product.name.length > 30 ? `${product.name.slice(0, 28)}…` : product.name}</span>
+        <span className="buybar-info">
+          <span className="small muted">{product.name}</span>
           <strong>{rupees(product.price)}</strong>
         </span>
         <button type="button" className="btn primary" tabIndex={passed && !atEnd ? 0 : -1} onClick={onAdd}>
