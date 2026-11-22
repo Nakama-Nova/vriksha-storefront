@@ -17,7 +17,7 @@ export const SHOP = {
 
 export const POLICY = {
   /** Shown at the top of every policy page. Change it whenever a page's meaning changes. */
-  updated: "29 October 2026",
+  updated: "22 November 2026",
   /** Hours after delivery within which damage or a defect must be reported (with photos). */
   reportWithinHours: 48,
   /** Working days within which an agreed refund is paid. */

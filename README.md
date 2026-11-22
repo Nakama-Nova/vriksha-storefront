@@ -11,6 +11,7 @@ The public website for Vriksha Studio: wood furniture and carvings. Next.js (App
 | `/cart`, `/checkout`, `/thanks` | Cart in the browser, pincode check, guest checkout, confirmation |
 | `/journal`, `/journal/[slug]` | The blog. Each post is an `.mdx` file in `content/journal` (see "Writing a Journal post" below); there is also an RSS feed at `/journal/feed.xml` |
 | `/sitemap.xml`, `/robots.txt` | Generated: pages, products and posts are listed; the cart, checkout, thanks and track pages are kept out of search |
+| `/newsletter/confirm`, `/newsletter/unsubscribe` | Where the links in our newsletter emails land. Each shows a button (so mail scanners cannot act by themselves) and calls the backend |
 | `/custom` | Custom-piece enquiry |
 | `/track` | Order status by order number **and** phone (the phone is never put in a URL) |
 | `/contact` | Phone / WhatsApp |
@@ -53,6 +54,10 @@ Normal text, [a link to the shop](/shop), lists and **bold** work as usual.
 
 Merge to `main` and the site deploys with the new post. Posts appear in the list, the sitemap and the RSS feed on their own.
 
+### Newsletter
+
+A sign-up form sits in the footer, on the home page and at the end of every Journal post. It uses double opt-in: the visitor gets an email with a link, and is on the list only after tapping it. The backend (`/public/newsletter/subscribe`, `/confirm`, `/unsubscribe`) stores the consent and keeps the list in Brevo; the owner writes and sends each issue in Brevo's own editor. The backend needs `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` and `STOREFRONT_URL` (this site's address), so **do not deploy the forms before the backend has them**: until then the form answers "The newsletter is not set up yet."
+
 ### Settings (`.env.local`)
 
 | Variable | Purpose |
@@ -84,7 +89,6 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 
 ## Not built yet
 
-- A newsletter (sign-up form, confirmation email, sending)
 - Reference-photo upload on the enquiry form (for now the form tells people to send photos on WhatsApp with their reference number)
 - Customer accounts on the site (the backend has them under `/account`; the site still uses guest checkout)
 - Online payments (waiting for the trade licence / GST registration)

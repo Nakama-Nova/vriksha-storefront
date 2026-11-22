@@ -949,3 +949,43 @@ model-viewer {
   border: 0;
   border-top: 1px solid var(--line);
 }
+
+/* Newsletter sign-up */
+.newsletter-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.newsletter-row .btn {
+  padding-block: 13px;
+}
+/* A trap for bots: out of sight and out of the tab order, but present in the page */
+.newsletter-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.newsletter-note {
+  margin-top: 8px;
+  color: var(--muted);
+}
+.newsletter.dark .newsletter-note,
+.newsletter-done.dark {
+  color: var(--line);
+}
+.newsletter.dark .newsletter-note a {
+  text-decoration: underline;
+}
+.newsletter-done {
+  font-weight: 500;
+}
+.footer-news {
+  flex: 1 1 100%;
+  max-width: 480px;
+}
+.footer .alert.error {
+  margin-top: 8px;
+}
