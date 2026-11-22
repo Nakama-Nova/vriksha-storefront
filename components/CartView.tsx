@@ -23,6 +23,8 @@ export function CartView() {
   }
 
   const hasBespoke = items.some((i) => i.madeToOrder);
+  // Pieces are built one after another by the same workshop, so the order is ready when the slowest piece is.
+  const makingDays = Math.max(0, ...items.filter((i) => i.madeToOrder).map((i) => i.leadTimeDays ?? 0));
   return (
     <div className="two-col">
       <div>
@@ -73,6 +75,12 @@ export function CartView() {
           </span>
           <span>{rupees(total)}</span>
         </div>
+        {makingDays > 0 && (
+          <div className="sum-row">
+            <span className="muted">Making time</span>
+            <span>About {makingDays} days</span>
+          </div>
+        )}
         <div className="sum-row">
           <span className="muted">Delivery</span>
           <span>Confirmed when we call</span>
