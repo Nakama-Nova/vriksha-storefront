@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart";
 const LINKS = [
   { href: "/shop", label: "Shop" },
   { href: "/custom", label: "Custom orders" },
+  { href: "/journal", label: "Journal" },
   { href: "/track", label: "Track order" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

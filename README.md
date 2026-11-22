@@ -9,6 +9,8 @@ The public website for Vriksha Studio: wood furniture and carvings. Next.js (App
 | `/` | Hero, shop by craft, featured pieces |
 | `/shop`, `/shop/[slug]` | Catalogue with search and category filter; product page with photos, **3D view** (`<model-viewer>`, loaded only when opened), add to cart, Google product data |
 | `/cart`, `/checkout`, `/thanks` | Cart in the browser, pincode check, guest checkout, confirmation |
+| `/journal`, `/journal/[slug]` | The blog. Each post is an `.mdx` file in `content/journal` (see "Writing a Journal post" below); there is also an RSS feed at `/journal/feed.xml` |
+| `/sitemap.xml`, `/robots.txt` | Generated: pages, products and posts are listed; the cart, checkout, thanks and track pages are kept out of search |
 | `/custom` | Custom-piece enquiry |
 | `/track` | Order status by order number **and** phone (the phone is never put in a URL) |
 | `/contact` | Phone / WhatsApp |
@@ -28,6 +30,28 @@ npm run dev                     # http://localhost:3000
 Checks: `npm run lint`, `npx next typegen` then `npx tsc --noEmit`, `npm run build`. Storefront CI (`.github/workflows/ci.yml`) runs the same four steps on Node 22, with no backend reachable, so the build must work without one.
 
 This project uses a recent Next.js with breaking changes from older versions (see `AGENTS.md`); read the guide in `node_modules/next/dist/docs/` before changing framework-level code.
+
+### Writing a Journal post
+
+Add a file to `content/journal`. The file name becomes the address (`care-for-carved-wood.mdx` is `/journal/care-for-carved-wood`; use lower-case words joined by hyphens). Start it with the post's details, then write in Markdown:
+
+```mdx
+export const post = {
+  title: "How to care for carved wood at home",
+  description: "One sentence shown in the list and in Google.",
+  date: "2026-11-20",
+  tags: ["Care"],
+  cover: "/journal/care.webp",   // optional, a file in public/journal
+  coverAlt: "A carved panel",    // optional, describes the cover
+  draft: true,                   // optional: shows in `npm run dev` only, never live
+};
+
+## A heading
+
+Normal text, [a link to the shop](/shop), lists and **bold** work as usual.
+```
+
+Merge to `main` and the site deploys with the new post. Posts appear in the list, the sitemap and the RSS feed on their own.
 
 ### Settings (`.env.local`)
 
@@ -60,6 +84,7 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 
 ## Not built yet
 
+- A newsletter (sign-up form, confirmation email, sending)
 - Reference-photo upload on the enquiry form (for now the form tells people to send photos on WhatsApp with their reference number)
 - Customer accounts on the site (the backend has them under `/account`; the site still uses guest checkout)
 - Online payments (waiting for the trade licence / GST registration)

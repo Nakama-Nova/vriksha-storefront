@@ -40,6 +40,9 @@ export function Footer() {
                 <Link href="/cart">Cart</Link>
               </li>
               <li>
+                <Link href="/journal">Journal</Link>
+              </li>
+              <li>
                 <Link href="/about">About us</Link>
               </li>
               <li>
