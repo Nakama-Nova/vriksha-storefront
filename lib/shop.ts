@@ -13,8 +13,26 @@ export const DEFAULT_SORT: SortKey = "name";
 
 export const isSortKey = (v: string | null): v is SortKey => v !== null && Object.hasOwn(SORTS, v);
 
+/** The two kinds of piece the backend sends in `item_type`, with the names shoppers see. */
+export const TYPES = { furniture: "Furniture", sculpture: "Carvings & sculptures" } as const;
+export type TypeKey = keyof typeof TYPES;
+export const isTypeKey = (v: string | null): v is TypeKey => v !== null && Object.hasOwn(TYPES, v);
+
+/**
+ * Older links (home page, footer, search results) say ?category=Furniture or ?category=Carvings. The shop's real
+ * categories are things like "King Size Bed", so those links would show nothing; they mean a kind of piece instead.
+ */
+export function legacyType(category: string | null, categories: string[]): TypeKey | null {
+  const c = norm(category);
+  if (!c || categories.some((x) => norm(x) === c)) return null;
+  if (c === "furniture") return "furniture";
+  if (["carvings", "carving", "sculpture", "sculptures", "carvings & sculptures"].includes(c)) return "sculpture";
+  return null;
+}
+
 export type ShopFilters = {
   q: string;
+  type: TypeKey | null;
   category: string | null;
   wood: string | null;
   min: number | null; // rupees
@@ -50,6 +68,7 @@ export function filterAndSort(products: Product[], f: ShopFilters): Product[] {
   const needle = norm(f.q);
   const out = products.filter(
     (p) =>
+      (!f.type || p.item_type === f.type) &&
       (!f.category || norm(p.category) === norm(f.category)) &&
       (!f.wood || norm(p.wood_type) === norm(f.wood)) &&
       (f.min === null || priceOf(p) >= f.min) &&
@@ -65,7 +84,7 @@ export function filterAndSort(products: Product[], f: ShopFilters): Product[] {
 
 /** How many filters (other than search and sort) are narrowing the list. */
 export const activeFilterCount = (f: ShopFilters) =>
-  [f.category, f.wood, f.min !== null, f.max !== null, f.ready, f.q.trim()].filter(Boolean).length;
+  [f.type, f.category, f.wood, f.min !== null, f.max !== null, f.ready, f.q.trim()].filter(Boolean).length;
 
 /**
  * Pieces to show under a product: the same category first, then the same wood or kind of piece,

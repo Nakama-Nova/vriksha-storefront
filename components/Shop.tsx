@@ -4,12 +4,12 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/lib/api";
 import { rupees } from "@/lib/format";
-import { activeFilterCount, DEFAULT_SORT, distinct, filterAndSort, isSortKey, parseRupees, SORTS, type ShopFilters } from "@/lib/shop";
+import { activeFilterCount, DEFAULT_SORT, distinct, filterAndSort, isSortKey, isTypeKey, legacyType, parseRupees, SORTS, TYPES, type ShopFilters, type TypeKey } from "@/lib/shop";
 import { ProductCard } from "./ProductCard";
 
 /**
- * Search, category, wood, price, availability and sort over the whole catalogue (a small shop: done in the
- * browser). The choices live in the address (?category=Furniture&sort=price-asc), so a filtered shop can be
+ * Search, kind of piece, category, wood, price, availability and sort over the whole catalogue (a small shop: done in the
+ * browser). The choices live in the address (?type=furniture&sort=price-asc), so a filtered shop can be
  * shared, bookmarked, and the back button works.
  */
 export function Shop({ products }: { products: Product[] }) {
@@ -41,9 +41,13 @@ export function Shop({ products }: { products: Product[] }) {
   }
 
   const sortParam = params.get("sort");
+  const categories = useMemo(() => distinct(products.map((p) => p.category)), [products]);
+  const typeParam = params.get("type");
+  const oldLink = legacyType(params.get("category"), categories);
   const filters: ShopFilters = {
     q,
-    category: params.get("category"),
+    type: isTypeKey(typeParam) ? typeParam : oldLink,
+    category: oldLink ? null : params.get("category"),
     wood: params.get("wood"),
     min: parseRupees(params.get("min")),
     max: parseRupees(params.get("max")),
@@ -51,7 +55,6 @@ export function Shop({ products }: { products: Product[] }) {
     sort: isSortKey(sortParam) ? sortParam : DEFAULT_SORT,
   };
 
-  const categories = useMemo(() => distinct(products.map((p) => p.category)), [products]);
   const woods = useMemo(() => distinct(products.map((p) => p.wood_type)), [products]);
   const shown = filterAndSort(products, filters);
   const active = activeFilterCount(filters);
@@ -65,19 +68,31 @@ export function Shop({ products }: { products: Product[] }) {
   }
 
   const same = (a: string | null, b: string) => a?.toLowerCase() === b.toLowerCase();
+  // Only offer "Furniture / Carvings" when the shop really has both kinds
+  const kinds = (Object.keys(TYPES) as TypeKey[]).filter((t) => products.some((p) => p.item_type === t));
+  const showKinds = kinds.length > 1;
+  const pickType = (t: TypeKey | null) => update({ type: t, category: null });
 
   return (
     <div className="stack" style={{ gap: 24 }}>
-      {categories.length > 0 && (
-        <div className="filters" role="group" aria-label="Categories">
-          <button className="filter" aria-pressed={!filters.category} onClick={() => update({ category: null })}>
-            All
-          </button>
-          {categories.map((c) => (
-            <button key={c} className="filter" aria-pressed={same(filters.category, c)} onClick={() => update({ category: c })}>
-              {c}
+      {(showKinds || categories.length > 0) && (
+        <div className="stack" style={{ gap: 10 }}>
+          <div className="filters" role="group" aria-label="Kind of piece">
+            <button className="filter" aria-pressed={!filters.type && !filters.category} onClick={() => update({ type: null, category: null })}>
+              All pieces
             </button>
-          ))}
+            {showKinds &&
+              kinds.map((t) => (
+                <button key={t} className="filter" aria-pressed={filters.type === t} onClick={() => pickType(t)}>
+                  {TYPES[t]}
+                </button>
+              ))}
+            {categories.map((c) => (
+              <button key={c} className="filter" aria-pressed={same(filters.category, c)} onClick={() => update({ category: c, type: null })}>
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

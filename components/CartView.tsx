@@ -100,8 +100,11 @@ export function CartView() {
         </Link>
         <p className="small muted">
           Nothing is charged online. We confirm your order by phone or WhatsApp
-          {hasBespoke ? ", then you pay an advance by UPI." : "."}
+          {hasBespoke ? ", then you pay an advance by UPI." : ", then you pay by UPI or cash on delivery."}
         </p>
+        <Link href="/shop" className="small" style={{ textAlign: "center" }}>
+          Keep browsing
+        </Link>
       </aside>
     </div>
   );

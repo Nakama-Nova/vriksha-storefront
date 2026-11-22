@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { ApiError, placeOrder, type CheckoutInput } from "@/lib/api";
+import { ApiError, checkDelivery, placeOrder, type CheckoutInput } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { rupees } from "@/lib/format";
 
@@ -15,6 +15,18 @@ export function CheckoutForm() {
   const [pay, setPay] = useState<CheckoutInput["pay_option"]>("advance_upi");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // Does the shop deliver to the pincode typed so far? Checked as soon as 6 digits are in, so a "no" is not found out at the end.
+  const [area, setArea] = useState<"idle" | "yes" | "no">("idle");
+
+  async function onPincode(value: string) {
+    if (!/^\d{6}$/.test(value)) return setArea("idle");
+    try {
+      const r = await checkDelivery(value);
+      setArea(r.serviceable ? "yes" : "no");
+    } catch {
+      setArea("idle"); // could not check: say nothing, the shop confirms the address by phone anyway
+    }
+  }
 
   if (!ready) return <p className="muted">Loading…</p>;
   if (!items.length) {
@@ -29,6 +41,7 @@ export function CheckoutForm() {
   }
 
   const hasBespoke = items.some((i) => i.madeToOrder);
+  const makingDays = Math.max(0, ...items.filter((i) => i.madeToOrder).map((i) => i.leadTimeDays ?? 0));
   // Pay on delivery is only for pieces that are already built
   const payOption = hasBespoke ? "advance_upi" : pay;
 
@@ -72,7 +85,10 @@ export function CheckoutForm() {
             </div>
             <div className="field">
               <label htmlFor="phone">WhatsApp number</label>
-              <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="98765 43210" />
+              <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" aria-describedby="phone-note" />
+              <p id="phone-note" className="small muted">
+                We call or WhatsApp this number to confirm.
+              </p>
             </div>
           </div>
           <div className="field">
@@ -94,7 +110,23 @@ export function CheckoutForm() {
             </div>
             <div className="field">
               <label htmlFor="pincode">Pincode</label>
-              <input id="pincode" name="pincode" className="input" required inputMode="numeric" pattern="\d{6}" maxLength={6} autoComplete="postal-code" placeholder="6 digits" />
+              <input
+                id="pincode"
+                name="pincode"
+                className="input"
+                required
+                inputMode="numeric"
+                pattern="\d{6}"
+                maxLength={6}
+                autoComplete="postal-code"
+                placeholder="6 digits"
+                aria-describedby="pincode-hint"
+                onChange={(e) => onPincode(e.target.value.trim())}
+              />
+              <p id="pincode-hint" className={`field-hint ${area === "yes" ? "ok" : area === "no" ? "bad" : ""}`} aria-live="polite">
+                {area === "yes" && "✓ We deliver to this pincode."}
+                {area === "no" && "We do not deliver here yet. You can still place the order and we will call to see what is possible."}
+              </p>
             </div>
           </div>
           <div className="field">
@@ -138,13 +170,31 @@ export function CheckoutForm() {
           <span>Total</span>
           <span>{rupees(total)}</span>
         </div>
+        <p className="small muted">Any delivery charge is told to you when we call, before you pay.</p>
+        <div className="stack" style={{ gap: 8 }}>
+          <strong className="small">What happens next</strong>
+          <ol className="next-steps small">
+            <li>
+              <span className="num">1</span>
+              <span>You place the order. <strong>Nothing is charged now.</strong></span>
+            </li>
+            <li>
+              <span className="num">2</span>
+              <span>We call or WhatsApp you to confirm the price{makingDays > 0 ? `, the making time (about ${makingDays} days)` : ""} and the delivery day.</span>
+            </li>
+            <li>
+              <span className="num">3</span>
+              <span>{payOption === "advance_upi" ? "You pay the advance by UPI and we start work." : "You pay cash or UPI when it arrives."}</span>
+            </li>
+          </ol>
+        </div>
         {error && (
           <div className="alert error" role="alert">
             {error}
           </div>
         )}
         <button type="submit" className="btn primary block" disabled={busy}>
-          {busy ? "Placing order…" : "Place order"}
+          {busy ? "Placing order…" : "Place order (nothing to pay now)"}
         </button>
         <p className="small muted">
           By placing the order you agree that we will contact you to confirm the price and delivery date before any payment. We use your details only for your order; see our <Link href="/privacy">privacy policy</Link>, <Link href="/terms">terms of sale</Link> and <Link href="/refunds">cancellations and refunds</Link>.
