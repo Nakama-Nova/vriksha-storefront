@@ -155,3 +155,14 @@ export const sendEnquiry = (input: EnquiryInput) => request<PublicOrder>("/publi
 /** The phone goes in the query string only to the API (never into this site's URLs). */
 export const trackOrder = (orderNumber: string, phone: string) =>
   request<PublicOrder>(`/public/orders/${encodeURIComponent(orderNumber.trim())}?phone=${encodeURIComponent(phone)}`, NO_STORE);
+
+// ---- newsletter (double opt-in: subscribe -> email link -> confirm) ----
+export type NewsletterSource = "footer" | "journal" | "home";
+
+/** Always answers the same way, so it never reveals who is already subscribed. `website` is a hidden spam trap and stays empty. */
+export const subscribeNewsletter = (email: string, source: NewsletterSource, website = "") =>
+  request<{ status: string }>("/public/newsletter/subscribe", JSON_POST({ email, source, website }));
+
+export const confirmNewsletter = (token: string) => request<{ status: string }>("/public/newsletter/confirm", JSON_POST({ token }));
+
+export const unsubscribeNewsletter = (token: string) => request<{ status: string }>("/public/newsletter/unsubscribe", JSON_POST({ token }));

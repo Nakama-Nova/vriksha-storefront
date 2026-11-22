@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PHONE, WHATSAPP } from "@/lib/config";
 import { POLICY_LINKS } from "@/lib/legal";
+import { NewsletterForm } from "./NewsletterForm";
 
 export function Footer() {
   return (
@@ -63,6 +64,11 @@ export function Footer() {
               ))}
             </ul>
           </div>
+        </div>
+        <div className="footer-news stack" style={{ gap: 10 }}>
+          <h4 style={{ margin: 0 }}>Stay in touch</h4>
+          <p className="small">New pieces and notes from the workshop, in your inbox now and then.</p>
+          <NewsletterForm source="footer" dark />
         </div>
       </div>
       <small>© Vriksha Studios. All prices in INR.</small>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { NewsletterForm } from "@/components/NewsletterForm";
 import { SITE_URL } from "@/lib/config";
 import { formatDate, getPost, getPosts } from "@/lib/journal";
 
@@ -82,6 +83,10 @@ export default async function PostPage(props: PageProps<"/journal/[slug]">) {
               Ask for a custom piece
             </Link>
           </div>
+        </div>
+        <div className="card stack" style={{ gap: 10 }}>
+          <strong>Get new posts by email</strong>
+          <NewsletterForm source="journal" />
         </div>
         <Link href="/journal" className="small">
           ← All posts

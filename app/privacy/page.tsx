@@ -20,6 +20,9 @@ export default function PrivacyPage() {
           <strong>When you send a custom-order enquiry:</strong> your name and phone number, and what you describe: the piece, wood, size, budget and any details you write.
         </li>
         <li>
+          <strong>When you subscribe to our newsletter:</strong> your email address, the time you asked, and the time you confirmed. We email you a link first, and you are on the list only once you tap it.
+        </li>
+        <li>
           <strong>When you track an order:</strong> the order number and the phone number you used. We use them only to find your order.
         </li>
         <li>
@@ -37,6 +40,7 @@ export default function PrivacyPage() {
       <ul>
         <li>To confirm your order, price and delivery date, to make your piece and to deliver it.</li>
         <li>To reply to your enquiry or message and to look after you after delivery (for example a defect).</li>
+        <li>To send you our newsletter (new pieces and Journal posts), if you subscribed. Every email has an unsubscribe link, and we stop as soon as you use it.</li>
         <li>To keep our accounts and records as the law requires.</li>
         <li>To keep the website secure and to stop misuse, such as repeated automated orders.</li>
       </ul>
@@ -50,6 +54,9 @@ export default function PrivacyPage() {
         </li>
         <li>
           <strong>Our database provider</strong> (Supabase), which stores orders and enquiries on servers in India (Mumbai).
+        </li>
+        <li>
+          <strong>Our email provider</strong> (Brevo), which sends our newsletter and holds the email addresses of people who subscribed.
         </li>
         <li>
           <strong>WhatsApp</strong>, if you choose to message us there, under WhatsApp&rsquo;s own privacy policy.

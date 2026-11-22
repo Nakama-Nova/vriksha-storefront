@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { NewsletterForm } from "@/components/NewsletterForm";
 import { ProductCard } from "@/components/ProductCard";
 import { getCatalog } from "@/lib/api";
 import { CARVINGS, type Carving } from "@/lib/art";
@@ -78,6 +79,19 @@ export default async function Home() {
           ) : (
             <div className="alert info">New pieces are being photographed. Meanwhile, tell us what you would like made.</div>
           )}
+        </div>
+      </section>
+
+      <section className="section" style={{ paddingTop: 0 }}>
+        <div className="wrap">
+          <div className="card warm stack" style={{ gap: 12, maxWidth: 640 }}>
+            <h2>Notes from the workshop</h2>
+            <p className="muted">New pieces, wood and care advice, and how custom orders come together. A short email now and then.</p>
+            <NewsletterForm source="home" />
+            <Link href="/journal" className="small">
+              Or read the Journal →
+            </Link>
+          </div>
         </div>
       </section>
 
