@@ -24,7 +24,10 @@ export function Footer() {
                 <Link href="/shop">All pieces</Link>
               </li>
               <li>
-                <Link href="/shop?category=Furniture">Furniture</Link>
+                <Link href="/shop?type=furniture">Furniture</Link>
+              </li>
+              <li>
+                <Link href="/shop?type=sculpture">Carvings</Link>
               </li>
               <li>
                 <Link href="/custom">Custom orders</Link>

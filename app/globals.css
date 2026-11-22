@@ -2,6 +2,7 @@
 :root {
   --brown: #5a2a06;
   --gold: #bf830b;
+  --gold-text: #8a5d00; /* gold for small text: 5.3:1 on cream, where --gold is only 3:1 */
   --surface: #ffffff;
   --warm: #fbf6ec;
   --text: #3a1b04;
@@ -96,7 +97,7 @@ p {
   font-size: 0.875rem;
 }
 .eyebrow {
-  color: var(--gold);
+  color: var(--gold-text);
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -131,6 +132,9 @@ p {
   text-align: center;
   font-size: 0.8rem;
   padding: 8px 12px;
+}
+.announce a {
+  font-weight: 600;
 }
 .header {
   border-bottom: 1px solid var(--line);
@@ -240,13 +244,28 @@ p {
 }
 .nav a:hover,
 .nav a[aria-current="page"] {
-  color: var(--gold);
+  color: var(--gold-text);
 }
 .cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
   font-weight: 600;
   color: var(--brown);
   text-decoration: none;
   white-space: nowrap;
+}
+.cart-count {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--brown);
+  color: #fff;
+  font-size: 0.78rem;
+  line-height: 22px;
+  text-align: center;
 }
 /* Carved brackets hang from the top corners of every page; header content keeps clear of them */
 .header {
@@ -283,11 +302,12 @@ p {
 .header .wrap > .row {
   flex-wrap: nowrap;
 }
-.menu-btn {
+/* .btn sets display later in this file, so say ".btn.menu-btn" to win: the Menu button is for phones only */
+.btn.menu-btn {
   display: none;
 }
 @media (max-width: 860px) {
-  .menu-btn {
+  .btn.menu-btn {
     display: inline-flex;
   }
   .nav {
@@ -776,7 +796,8 @@ model-viewer {
   border: 1px solid var(--line);
   background: var(--surface);
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 10px 18px;
+  min-height: 44px;
   font: 500 0.9rem var(--body);
   cursor: pointer;
   color: var(--text);
@@ -899,7 +920,7 @@ model-viewer {
   font-size: 1.5rem;
 }
 .post-card:hover h2 {
-  color: var(--gold);
+  color: var(--gold-text);
 }
 .post-cover {
   aspect-ratio: 3 / 2;
@@ -933,7 +954,7 @@ model-viewer {
   text-underline-offset: 3px;
 }
 .prose a:hover {
-  color: var(--gold);
+  color: var(--gold-text);
 }
 .prose blockquote {
   margin-inline: 0;
@@ -1024,4 +1045,313 @@ model-viewer {
 /* More like this */
 .related h2 {
   font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+
+/* ---- Conversion pass: product cards, product page, trust, home, checkout ---- */
+
+.alert.ok {
+  background: #eef7f1;
+  color: #1f5a37;
+  border: 1px solid #c4e0cf;
+}
+
+/* Product cards: a photo with a badge on it, a line of facts, price and a nudge to open */
+.pc-media {
+  position: relative;
+}
+.pc-media .photo {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.pc-badge {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  box-shadow: 0 1px 4px rgba(42, 26, 16, 0.18);
+}
+.pc-badge.ok {
+  background: #fff;
+}
+.product-card h3 {
+  line-height: 1.3;
+}
+.pc-foot {
+  margin-top: auto;
+  padding-top: 2px;
+}
+.pc-cta {
+  font-size: 0.85rem;
+  color: var(--gold-text);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.product-card:hover .pc-cta,
+.product-card:focus-visible .pc-cta {
+  opacity: 1;
+  transform: none;
+}
+.product-card:hover .photo,
+.product-card:focus-visible .photo {
+  box-shadow: 0 8px 22px rgba(58, 27, 4, 0.18);
+  transform: translateY(-2px);
+}
+@media (hover: none) {
+  .pc-cta {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Product page */
+.price-big {
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--brown);
+  line-height: 1.1;
+}
+.lead-text {
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+.desc-h {
+  font-family: var(--body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+  margin-top: 4px;
+}
+.desc p {
+  line-height: 1.65;
+}
+.faq summary {
+  min-height: 28px;
+}
+.added-note:empty {
+  display: none;
+}
+
+/* Reasons to trust us */
+.trust {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.trust li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.trust svg {
+  flex: none;
+  color: var(--gold-text);
+  margin-top: 2px;
+}
+.trust li > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.trust-list {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--warm);
+}
+.trust-bar {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.trust-strip {
+  border-bottom: 1px solid var(--line);
+}
+.trust-strip .wrap {
+  padding-top: 26px;
+  padding-bottom: 26px;
+}
+@media (max-width: 960px) {
+  .trust-bar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .trust-bar {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* How an order works (home) */
+.how {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  counter-reset: none;
+}
+.how li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+@media (max-width: 960px) {
+  .how {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .how {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phones: the buy button follows you down the product page */
+.buybar {
+  display: none;
+}
+@media (max-width: 860px) {
+  .buybar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -4px 16px rgba(58, 27, 4, 0.1);
+    transform: translateY(110%);
+    transition: transform 0.2s ease;
+    visibility: hidden;
+  }
+  .buybar.show {
+    transform: none;
+    visibility: visible;
+  }
+}
+
+.buybar-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.3;
+}
+.buybar-info .small {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.buybar .btn {
+  flex: none;
+  white-space: nowrap;
+  padding-inline: 20px;
+}
+
+/* WhatsApp: shown only once the shop's number is set */
+.wa-float {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 25;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 18px 0 14px;
+  border-radius: 999px;
+  background: #1f7a4a;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(31, 122, 74, 0.4);
+}
+.wa-float:hover {
+  background: #186a3f;
+}
+@media (max-width: 860px) {
+  .wa-label {
+    display: none;
+  }
+  .wa-float {
+    padding: 0 13px;
+  }
+  body:has(.buybar.show) .wa-float {
+    bottom: 84px;
+  }
+}
+
+/* Checkout */
+.next-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+.next-steps li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.next-steps .num {
+  width: 26px;
+  height: 26px;
+  font-size: 0.8rem;
+}
+.field-hint {
+  font-size: 0.85rem;
+  min-height: 1.2em;
+}
+.field-hint.ok {
+  color: var(--ok);
+}
+.field-hint.bad {
+  color: var(--bad);
+}
+.crumbs {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.crumbs [aria-current="step"] {
+  color: var(--brown);
+  font-weight: 600;
+}
+.btn.primary:disabled {
+  background: var(--brown);
+}
+
+/* Respect "reduce motion" settings */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Big screens: the photos stay in view while you read the details beside them */
+@media (min-width: 861px) {
+  .product > :first-child {
+    position: sticky;
+    top: 104px;
+  }
 }

@@ -3,14 +3,24 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
 import { DeliveryCheck } from "@/components/DeliveryCheck";
-import { ProductGallery } from "@/components/ProductGallery";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductDescription } from "@/components/ProductDescription";
+import { ProductGallery } from "@/components/ProductGallery";
+import { TrustPoints } from "@/components/TrustPoints";
 import { getCatalog, getProduct, mediaUrl, shareImageUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
+import { describe } from "@/lib/describe";
 import { rupees, sizeText } from "@/lib/format";
 import { relatedTo } from "@/lib/shop";
 
 export const revalidate = 60;
+
+/** One or two sentences for search results and link previews: the description's introduction, trimmed. */
+function summary(p: { name: string; short_desc: string | null }): string {
+  const text = describe(p.short_desc, p.name).intro;
+  if (!text) return `${p.name}, handcrafted in solid wood by Vriksha Studio.`;
+  return text.length > 160 ? `${text.slice(0, 157).replace(/\s+\S*$/, "")}…` : text;
+}
 
 export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;
@@ -18,8 +28,9 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
   if (!p) return { title: "Piece not found" };
   return {
     title: p.name,
-    description: p.short_desc ?? `${p.name}, handcrafted by Vriksha Studio.`,
-    openGraph: { images: p.images[0] ?? p.renders[0] ? [shareImageUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
+    description: summary(p),
+    alternates: { canonical: `/shop/${p.slug}` },
+    openGraph: { title: p.name, description: summary(p), type: "website", url: `/shop/${p.slug}`, images: p.images[0] ?? p.renders[0] ? [shareImageUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
   };
 }
 
@@ -29,6 +40,8 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
   if (!p) notFound();
   const related = catalog ? relatedTo(p, catalog) : [];
 
+  const desc = describe(p.short_desc, p.name);
+  const ready = !p.made_to_order && p.in_stock;
   const size = sizeText(p.dimensions_mm);
   const specs: [string, string][] = [];
   specs.push(["Type", p.item_type === "sculpture" ? "Sculpture" : "Furniture"]);
@@ -42,7 +55,9 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: p.name,
-    description: p.short_desc ?? undefined,
+    description: summary(p),
+    brand: { "@type": "Brand", name: "Vriksha Studio" },
+    url: `${SITE_URL}/shop/${p.slug}`,
     image: [...p.images, ...p.renders].map((i) => mediaUrl(i.url)),
     offers: {
       "@type": "Offer",
@@ -52,28 +67,59 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
     },
   };
 
+  const crumbs = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
+      { "@type": "ListItem", position: 3, name: p.name, item: `${SITE_URL}/shop/${p.slug}` },
+    ],
+  };
+
   return (
     <section className="section">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([jsonLd, crumbs]).replace(/</g, "\\u003c") }} />
       <div className="wrap stack" style={{ gap: 24 }}>
         <p className="small muted">
           <Link href="/">Home</Link> / <Link href="/shop">Shop</Link> / {p.name}
         </p>
         <div className="product">
           <ProductGallery images={[...p.images, ...p.renders]} modelUrl={p.model_url} name={p.name} />
-          <div className="stack" style={{ gap: 20 }}>
-            {p.made_to_order && (
-              <span className="chip" style={{ alignSelf: "flex-start" }}>
-                Made to order{p.lead_time_days ? ` · about ${p.lead_time_days} days` : ""}
-              </span>
-            )}
+          <div className="stack" style={{ gap: 18 }}>
+            <div className="row" style={{ gap: 8 }}>
+              {p.made_to_order && (
+                <span className="chip">Made to order{p.lead_time_days ? ` · about ${p.lead_time_days} days` : ""}</span>
+              )}
+              {ready && <span className="chip ok">Ready to ship</span>}
+              {p.wood_type && <span className="chip">{p.wood_type}</span>}
+            </div>
             <h1 style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}>{p.name}</h1>
-            <p style={{ fontSize: "1.8rem", fontWeight: 600, color: "var(--brown)" }}>{rupees(p.price)}</p>
-            {p.short_desc && <p className="muted">{p.short_desc}</p>}
+            <div className="stack" style={{ gap: 4 }}>
+              <p className="price-big">{rupees(p.price)}</p>
+              <p className="small muted">
+                {p.made_to_order && p.lead_time_days
+                  ? `Built for you in about ${p.lead_time_days} days, counted from your advance. `
+                  : ""}
+                Any delivery charge is told to you before you pay.
+              </p>
+            </div>
+            {desc.intro && <p className="lead-text">{desc.intro}</p>}
             <AddToCart product={p} />
             <DeliveryCheck />
+            <TrustPoints variant="list" />
             <div className="stack" style={{ gap: 10 }}>
-              <details className="card faq" open>
+              {desc.blocks.length > 0 && (
+                <details className="card faq" open>
+                  <summary>
+                    <strong>About this piece</strong>
+                  </summary>
+                  <div style={{ marginTop: 12 }}>
+                    <ProductDescription blocks={desc.blocks} />
+                  </div>
+                </details>
+              )}
+              <details className="card faq" open={desc.blocks.length === 0}>
                 <summary>
                   <strong>Specifications</strong>
                 </summary>
@@ -91,24 +137,44 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
               </details>
               <details className="card faq">
                 <summary>
-                  <strong>Shipping and returns</strong>
+                  <strong>Delivery, returns and care</strong>
                 </summary>
                 <p className="small" style={{ marginTop: 10 }}>
-                  Delivery by our own team in our area; see <Link href="/delivery">delivery</Link> and <Link href="/refunds">cancellations and refunds</Link>.
+                  We deliver with our own team in our area; see <Link href="/delivery">delivery</Link> and <Link href="/refunds">cancellations and refunds</Link>. Questions? <Link href="/faq">Read our questions and answers</Link>.
                 </p>
               </details>
             </div>
             {ask ? (
               <a className="btn outline" href={ask} target="_blank" rel="noopener noreferrer">
-                Ask on WhatsApp
+                Ask about this piece on WhatsApp
               </a>
             ) : (
               <Link className="btn outline" href="/custom">
-                Ask about this piece
+                Want it changed? Ask for a custom version
               </Link>
             )}
-            <div className="card warm small">
-              Nothing is charged online. We confirm your order by phone or WhatsApp, then you pay an advance by UPI. Delivery by our own team in our area.
+            <div className="card warm stack" style={{ gap: 12 }}>
+              <h2 style={{ fontSize: "1.4rem" }}>How buying works</h2>
+              <ol className="steps small">
+                <li>
+                  <span className="num">1</span>
+                  <span>
+                    <strong>Place your order.</strong> Nothing is charged online.
+                  </span>
+                </li>
+                <li>
+                  <span className="num">2</span>
+                  <span>
+                    <strong>We call or WhatsApp you</strong> to confirm the price and delivery day.
+                  </span>
+                </li>
+                <li>
+                  <span className="num">3</span>
+                  <span>
+                    <strong>You pay by UPI{ready ? ", or cash on delivery" : " (an advance to begin the work)"}.</strong> We deliver and set it up.
+                  </span>
+                </li>
+              </ol>
             </div>
           </div>
         </div>

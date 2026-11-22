@@ -2,15 +2,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { ProductCard } from "@/components/ProductCard";
+import { TrustPoints } from "@/components/TrustPoints";
 import { getCatalog } from "@/lib/api";
 import { CARVINGS, type Carving } from "@/lib/art";
 
 export const revalidate = 60;
 
 const CRAFTS: { title: string; text: string; href: string; image: Carving }[] = [
-  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?category=Furniture", image: "furniture" },
-  { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?category=Carvings", image: "ganesha-painted" },
+  { title: "Furniture", text: "Chairs, tables, beds and storage in solid wood.", href: "/shop?type=furniture", image: "furniture" },
+  { title: "Wood carvings", text: "Wall panels, idols, door frames and decor.", href: "/shop?type=sculpture", image: "ganesha-painted" },
   { title: "Custom orders", text: "Tell us what you need. We design and build it.", href: "/custom", image: "door" },
+];
+
+const HOW: [string, string][] = [
+  ["Choose or describe", "Add a piece to your cart, or send us your idea for a custom one."],
+  ["We call you", "We confirm the price, the wood and the delivery day with you."],
+  ["Pay by UPI", "An advance for made-to-order pieces. Pieces in stock can be paid on delivery."],
+  ["We craft and deliver", "Our own team brings it to your door and sets it up."],
 ];
 
 export default async function Home() {
@@ -24,21 +32,30 @@ export default async function Home() {
           <div className="stack" style={{ gap: 22 }}>
             <span className="eyebrow">Handcrafted wood furniture &amp; carvings</span>
             <h1>Wood that remembers the hands that shaped it.</h1>
-            <p className="lead">Furniture for modern homes, finished with carving traditions from our ancestral craft.</p>
+            <p className="lead">
+              Solid-wood furniture and carved temple art, made by hand in our own workshop. Choose a piece you love, or tell us what you have in mind and we will build it.
+            </p>
             <div className="row">
               <Link href="/shop" className="btn primary">
-                Shop furniture
+                Browse the collection
               </Link>
               <Link href="/custom" className="btn outline">
-                Request a custom carving
+                Request a custom piece
               </Link>
             </div>
+            <p className="small muted">Nothing to pay online. We call you to confirm before you pay anything.</p>
           </div>
           {/* Always the carvings: product photos belong in "Featured pieces" below, not here. */}
           <div className="hero-art">
             <Image src="/carvings/balaji.webp" alt="Lord Balaji carved in wood" width={440} height={1000} priority />
             <Image src="/carvings/ganesha-painted.webp" alt="Painted Ganesha wood carving" width={489} height={1000} priority />
           </div>
+        </div>
+      </section>
+
+      <section className="trust-strip" aria-label="Why buy from us">
+        <div className="wrap">
+          <TrustPoints />
         </div>
       </section>
 
@@ -63,9 +80,9 @@ export default async function Home() {
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="wrap stack" style={{ gap: 28 }}>
           <div className="row between">
-            <h2>Featured pieces</h2>
+            <h2>Pieces from our workshop</h2>
             <Link href="/shop" className="price">
-              View all →
+              See everything →
             </Link>
           </div>
           {products === null ? (
@@ -82,7 +99,35 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section warm" aria-labelledby="how">
+        <div className="wrap stack" style={{ gap: 28 }}>
+          <div className="stack" style={{ gap: 8 }}>
+            <h2 id="how">How an order works</h2>
+            <p className="muted" style={{ maxWidth: "60ch" }}>
+              No online payment, no surprises. A real person talks to you before any money changes hands.
+            </p>
+          </div>
+          <ol className="how">
+            {HOW.map(([title, text], i) => (
+              <li key={title}>
+                <span className="num">{i + 1}</span>
+                <strong>{title}</strong>
+                <span className="muted small">{text}</span>
+              </li>
+            ))}
+          </ol>
+          <div className="row">
+            <Link href="/shop" className="btn primary">
+              Start with the collection
+            </Link>
+            <Link href="/faq" className="btn outline">
+              Read common questions
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="wrap">
           <div className="card warm stack" style={{ gap: 12, maxWidth: 640 }}>
             <h2>Notes from the workshop</h2>
