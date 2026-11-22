@@ -59,8 +59,29 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(self), xr-spatial-tracking=(self), microphone=(), geolocation=(), payment=(), usb=()" },
 ];
 
+// ---- Product photos -------------------------------------------------------------------------
+// Photos come from the shop's backend (/media/...). Staff upload full-size PNGs of about 1 MB, so
+// next/image resizes them and sends WebP (see components/Photo.tsx). Only that one host and path may be
+// optimised: anything else answers 400, so the optimiser cannot be used on other people's images.
+// The backend names each photo by its content hash and caches it for a year, so the optimised copies
+// are cached just as long, and a replaced photo (a new name) is picked up straight away.
+const imageHost = (() => {
+  try {
+    const u = new URL(API_URL);
+    return { protocol: u.protocol.replace(":", "") as "http" | "https", hostname: u.hostname, port: u.port };
+  } catch {
+    return null;
+  }
+})();
+
 const nextConfig: NextConfig = {
   poweredByHeader: false, // do not announce the framework
+  images: {
+    remotePatterns: imageHost ? [{ ...imageHost, pathname: "/media/**", search: "" }] : [],
+    // Next refuses to optimise images from private addresses (a safety rule against internal probing). Local
+    // development talks to http://127.0.0.1:8000, so allow it there only, never in a production build.
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -13,7 +13,7 @@ The public website for Vriksha Studio: wood furniture and carvings. Next.js (App
 | `/sitemap.xml`, `/robots.txt` | Generated: pages, products and posts are listed; the cart, checkout, thanks and track pages are kept out of search |
 | `/newsletter/confirm`, `/newsletter/unsubscribe` | Where the links in our newsletter emails land. Each shows a button (so mail scanners cannot act by themselves) and calls the backend |
 | `/custom` | Custom-piece enquiry |
-| `/track` | Order status by order number **and** phone (the phone is never put in a URL) |
+| `/track` | Order status by order number **and** phone (the phone is never put in a URL). The links in our order emails open `/track?order=ORD-2026-0014`, which fills in the order number so the customer only types their phone number; the page is kept out of search |
 | `/contact` | Phone / WhatsApp |
 | `/about` | The shop's story |
 | `/privacy`, `/cookies`, `/terms`, `/delivery`, `/refunds`, `/faq` | Policy and questions-and-answers pages. The shop's facts and numbers live in `lib/legal.ts`; they are sensible defaults for a made-to-order wood shop, so the owner should confirm each one and have a lawyer read the pages before relying on them |
@@ -84,7 +84,7 @@ The browser calls the backend directly (so the backend sees each visitor's real 
 - Server components fetch the catalogue with a 60-second cache, so pages are fast and a price change shows within a minute. If the backend is down, pages show a notice instead of failing (the build also works with no backend).
 - The cart is in `localStorage` (`lib/cart.tsx`, via `useSyncExternalStore`).
 - Brand colours and fonts come from `nakamadesk-backend/docs/brand/design-tokens.json`, as CSS variables in `app/globals.css`. The logo and carving cut-outs are in `public/brand` and `public/carvings`.
-- Photos come from the backend's `/media`; the site uses plain `<img>` (they are already sized by staff).
+- Photos come from the backend's `/media`. Staff upload full-size photos (about 1 MB each), so `components/Photo.tsx` shows them through `next/image`, which sends a resized WebP of the size each screen needs (a phone downloads a small copy, not the original). Each place a photo is shown passes a `sizes` value that says how wide it is there; keep it in step with the layout. Only the backend host set in `NEXT_PUBLIC_API_URL`, under `/media/`, may be optimised (`images` in `next.config.ts`); a photo from anywhere else is shown as it is. The backend names each photo by its content hash and caches it for a year, so optimised copies are cached as long too, and a replaced photo shows straight away. Product link previews (WhatsApp, Facebook) use a 640 px copy (`shareImageUrl` in `lib/api.ts`). On Vercel, image optimisation has a monthly allowance by plan, which a small catalogue stays well inside.
 - This project turns off Next 16's Cache Components (`next.config.ts`) and uses classic revalidating `fetch`.
 
 ## Not built yet

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { rupees } from "@/lib/format";
 import { DeliveryCheck } from "./DeliveryCheck";
+import { Photo } from "./Photo";
 
 export function CartView() {
   const { items, ready, total, count, setQuantity, remove } = useCart();
@@ -30,14 +31,8 @@ export function CartView() {
       <div>
         {items.map((i) => (
           <div className="cart-row" key={i.slug}>
-            <div className="photo" style={{ borderRadius: 10 }}>
-              {i.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={i.image} alt="" />
-              ) : (
-                <span aria-hidden="true" />
-              )}
-            </div>
+            {/* The cart stores the photo's full address; the link next to it already names the piece, so no alt text */}
+            <Photo image={i.image ? { url: i.image, alt: "" } : null} name="" sizes="96px" placeholder="" />
             <div className="stack" style={{ gap: 6 }}>
               <Link href={`/shop/${i.slug}`} style={{ fontWeight: 600, textDecoration: "none" }}>
                 {i.name}

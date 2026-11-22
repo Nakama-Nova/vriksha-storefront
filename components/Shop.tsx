@@ -177,8 +177,9 @@ export function Shop({ products }: { products: Product[] }) {
 
       {shown.length ? (
         <div className="grid-products">
-          {shown.map((p) => (
-            <ProductCard key={p.slug} product={p} />
+          {shown.map((p, i) => (
+            // the first row (up to four across) is in view when the page opens
+            <ProductCard key={p.slug} product={p} priority={i < 4} />
           ))}
         </div>
       ) : (

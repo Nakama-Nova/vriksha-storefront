@@ -7,7 +7,7 @@ import { ProductCard } from "@/components/ProductCard";
 import { ProductDescription } from "@/components/ProductDescription";
 import { ProductGallery } from "@/components/ProductGallery";
 import { TrustPoints } from "@/components/TrustPoints";
-import { getCatalog, getProduct, mediaUrl } from "@/lib/api";
+import { getCatalog, getProduct, mediaUrl, shareImageUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { describe } from "@/lib/describe";
 import { rupees, sizeText } from "@/lib/format";
@@ -30,7 +30,7 @@ export async function generateMetadata(props: PageProps<"/shop/[slug]">): Promis
     title: p.name,
     description: summary(p),
     alternates: { canonical: `/shop/${p.slug}` },
-    openGraph: { title: p.name, description: summary(p), type: "website", url: `/shop/${p.slug}`, images: p.images[0] ?? p.renders[0] ? [mediaUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
+    openGraph: { title: p.name, description: summary(p), type: "website", url: `/shop/${p.slug}`, images: p.images[0] ?? p.renders[0] ? [shareImageUrl((p.images[0] ?? p.renders[0]).url)] : undefined },
   };
 }
 

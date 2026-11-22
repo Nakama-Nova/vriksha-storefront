@@ -466,6 +466,7 @@ p {
   background: transparent;
 }
 .photo {
+  position: relative; /* the next/image photo fills this box */
   background: #e8dcc8;
   border-radius: var(--radius);
   aspect-ratio: 1 / 1;
