@@ -13,7 +13,7 @@ The public website for Vriksha Studio: wood furniture and carvings. Next.js (App
 | `/sitemap.xml`, `/robots.txt` | Generated: pages, products and posts are listed; the cart, checkout, thanks and track pages are kept out of search |
 | `/newsletter/confirm`, `/newsletter/unsubscribe` | Where the links in our newsletter emails land. Each shows a button (so mail scanners cannot act by themselves) and calls the backend |
 | `/custom` | Custom-piece enquiry |
-| `/track` | Order status by order number **and** phone (the phone is never put in a URL) |
+| `/track` | Order status by order number **and** phone (the phone is never put in a URL). The links in our order emails open `/track?order=ORD-2026-0014`, which fills in the order number so the customer only types their phone number; the page is kept out of search |
 | `/contact` | Phone / WhatsApp |
 | `/about` | The shop's story |
 | `/privacy`, `/cookies`, `/terms`, `/delivery`, `/refunds`, `/faq` | Policy and questions-and-answers pages. The shop's facts and numbers live in `lib/legal.ts`; they are sensible defaults for a made-to-order wood shop, so the owner should confirm each one and have a lawyer read the pages before relying on them |

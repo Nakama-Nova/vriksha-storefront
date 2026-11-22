@@ -35,7 +35,8 @@ function Progress({ status }: { status: string }) {
   );
 }
 
-export function TrackForm() {
+/** `initialNumber`: the order number from the link in our emails, so the customer only has to add their phone number. */
+export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [order, setOrder] = useState<PublicOrder | null>(null);
@@ -66,11 +67,12 @@ export function TrackForm() {
       <form className="row" style={{ alignItems: "flex-end" }} onSubmit={onSubmit}>
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="number">Order number</label>
-          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" />
+          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" defaultValue={initialNumber} />
         </div>
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="phone">Phone number</label>
-          <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="The number you ordered with" />
+          {/* With the order number already filled in from an email link, the phone number is the only thing left to type. */}
+          <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="The number you ordered with" autoFocus={initialNumber !== ""} />
         </div>
         <button type="submit" className="btn primary" disabled={busy}>
           {busy ? "Checking…" : "Track order"}
