@@ -77,7 +77,10 @@ export function CheckoutForm() {
           </div>
           <div className="field">
             <label htmlFor="email">Email (optional)</label>
-            <input id="email" name="email" className="input" type="email" autoComplete="email" />
+            <input id="email" name="email" className="input" type="email" autoComplete="email" maxLength={254} aria-describedby="email-note" />
+            <p id="email-note" className="small muted">
+              If you add one, we email you when we receive your order, when it is confirmed and when we receive a payment. No other emails; see our <Link href="/privacy">privacy policy</Link>.
+            </p>
           </div>
         </section>
 

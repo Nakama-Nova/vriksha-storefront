@@ -54,6 +54,7 @@ export function ThanksView() {
       ) : (
         <p className="muted">We have received your order and will call or WhatsApp you to confirm.</p>
       )}
+      <p className="small muted">If you gave an email address, a confirmation should reach it within a few minutes. Please look in your spam folder too.</p>
 
       <div className="card stack" style={{ textAlign: "left", width: "100%" }}>
         <h2 style={{ fontSize: "1.8rem" }}>What happens next</h2>

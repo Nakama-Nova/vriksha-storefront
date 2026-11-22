@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       <h2>What we collect, and when</h2>
       <ul>
         <li>
-          <strong>When you place an order:</strong> your name, phone number, email (optional), delivery address, town and pincode, any note you add, and how you chose to pay.
+          <strong>When you place an order:</strong> your name, phone number, email (optional), delivery address, town and pincode, any note you add, and how you chose to pay. If you give an email address, we use it only to email you about this order.
         </li>
         <li>
           <strong>When you send a custom-order enquiry:</strong> your name and phone number, and what you describe: the piece, wood, size, budget and any details you write.
@@ -39,6 +39,7 @@ export default function PrivacyPage() {
       <h2>Why we use it</h2>
       <ul>
         <li>To confirm your order, price and delivery date, to make your piece and to deliver it.</li>
+        <li>To email you about an order you placed on this website, if you gave an email address: when we receive it, when it is confirmed and when we receive a payment. These emails are about your order only; they are not marketing, and you do not need to subscribe to our newsletter to get them.</li>
         <li>To reply to your enquiry or message and to look after you after delivery (for example a defect).</li>
         <li>To send you our newsletter (new pieces and Journal posts), if you subscribed. Every email has an unsubscribe link, and we stop as soon as you use it.</li>
         <li>To keep our accounts and records as the law requires.</li>
@@ -56,7 +57,7 @@ export default function PrivacyPage() {
           <strong>Our database provider</strong> (Supabase), which stores orders and enquiries on servers in India (Mumbai).
         </li>
         <li>
-          <strong>Our email provider</strong> (Brevo), which sends our newsletter and holds the email addresses of people who subscribed.
+          <strong>Our email provider</strong> (Brevo), which sends the emails about your order, and our newsletter, and holds the email addresses of people who subscribed.
         </li>
         <li>
           <strong>WhatsApp</strong>, if you choose to message us there, under WhatsApp&rsquo;s own privacy policy.
