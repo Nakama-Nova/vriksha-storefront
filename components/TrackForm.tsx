@@ -67,7 +67,10 @@ export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
       <form className="row" style={{ alignItems: "flex-end" }} onSubmit={onSubmit}>
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="number">Order number</label>
-          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" defaultValue={initialNumber} />
+          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" defaultValue={initialNumber} aria-describedby="number-hint" />
+          <p id="number-hint" className="small muted">
+            It starts with ORD- and is in our confirmation email and on the thank-you page.
+          </p>
         </div>
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="phone">Phone number</label>

@@ -67,17 +67,17 @@ export function EnquiryForm() {
         </div>
         <div className="field">
           <label htmlFor="phone">WhatsApp number</label>
-          <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="98765 43210" />
+          <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" />
         </div>
       </div>
       <div className="field">
         <label htmlFor="what">What would you like made?</label>
-        <input id="what" name="what" className="input" required minLength={2} maxLength={200} placeholder="e.g. Temple door frame, dining table, wall panel" />
+        <input id="what" name="what" className="input" required minLength={2} maxLength={200} placeholder="e.g. Door frame, dining table" />
       </div>
       <div className="grid2">
         <div className="field">
           <label htmlFor="wood">Wood preference</label>
-          <input id="wood" name="wood" className="input" maxLength={100} placeholder="Teak, rosewood, sheesham, not sure" />
+          <input id="wood" name="wood" className="input" maxLength={100} placeholder="Teak, rosewood, not sure" />
         </div>
         <div className="field">
           <label htmlFor="size">Approx. size (L × W × H, mm)</label>

@@ -1355,3 +1355,53 @@ model-viewer {
     top: 104px;
   }
 }
+
+
+/* Shop on phones: the pieces come first; search, wood, price and sort open from a button */
+.filters-toggle {
+  display: none;
+}
+@media (max-width: 640px) {
+  .filters-toggle {
+    display: inline-flex;
+    width: 100%;
+  }
+  .shop-tools:not(.open) {
+    display: none;
+  }
+}
+
+/* Phones: two pieces across, like most shops, so more is on screen at once */
+@media (max-width: 520px) {
+  .grid-products {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+  .product-card h3 {
+    font-size: 0.95rem;
+  }
+  .pc-badge {
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    white-space: normal;
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    text-align: center;
+  }
+  .pc-cta {
+    display: none;
+  }
+}
+
+/* Phones: in the cart, the price and the quantity share one row */
+@media (max-width: 560px) {
+  .cart-row .cart-end {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center !important;
+  }
+  .pc-badge {
+    border-radius: 12px;
+  }
+}
