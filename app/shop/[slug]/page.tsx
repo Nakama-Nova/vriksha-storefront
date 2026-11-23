@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCart } from "@/components/AddToCart";
 import { DeliveryCheck } from "@/components/DeliveryCheck";
+import { Customise } from "@/components/Customise";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductQA } from "@/components/ProductQA";
 import { ProductDescription } from "@/components/ProductDescription";
 import { ProductGallery } from "@/components/ProductGallery";
 import { TrustPoints } from "@/components/TrustPoints";
@@ -11,6 +13,7 @@ import { getCatalog, getProduct, mediaUrl, shareImageUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { describe } from "@/lib/describe";
 import { rupees, sizeRows, sizeSummary } from "@/lib/format";
+import { CARE, finishOptions, glance } from "@/lib/productInfo";
 import { relatedTo } from "@/lib/shop";
 
 export const revalidate = 60;
@@ -116,76 +119,87 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
             <AddToCart product={p} />
             <DeliveryCheck />
             <TrustPoints variant="list" />
-            <div className="stack" style={{ gap: 10 }}>
-              {desc.blocks.length > 0 && (
-                <details className="card faq" open>
-                  <summary>
-                    <strong>About this piece</strong>
-                  </summary>
-                  <div style={{ marginTop: 12 }}>
-                    <ProductDescription blocks={desc.blocks} />
-                  </div>
-                </details>
-              )}
-              <details className="card faq" open={desc.blocks.length === 0}>
-                <summary>
-                  <strong>Specifications and size</strong>
-                </summary>
-                <dl className="specs" style={{ margin: "10px 0 0" }}>
-                  {specs.map(([k, v]) => (
-                    <div key={k}>
-                      <dt>{k}</dt>
-                      <dd>{v}</dd>
-                    </div>
-                  ))}
-                </dl>
-                <p className="small muted" style={{ marginTop: 10 }}>
-                  Wood is a natural material, so grain and colour differ from piece to piece.
-                </p>
-              </details>
-              <details className="card faq">
-                <summary>
-                  <strong>Delivery, returns and care</strong>
-                </summary>
-                <p className="small" style={{ marginTop: 10 }}>
-                  We deliver with our own team in our area; see <Link href="/delivery">delivery</Link> and <Link href="/refunds">cancellations and refunds</Link>. Questions? <Link href="/faq">Read our questions and answers</Link>.
-                </p>
-              </details>
-            </div>
-            {ask ? (
-              <a className="btn outline" href={ask} target="_blank" rel="noopener noreferrer">
-                Ask about this piece on WhatsApp
-              </a>
-            ) : (
-              <Link className="btn outline" href="/custom">
-                Want it changed? Ask for a custom version
-              </Link>
-            )}
-            <div className="card warm stack" style={{ gap: 12 }}>
-              <h2 style={{ fontSize: "1.4rem" }}>How buying works</h2>
-              <ol className="steps small">
-                <li>
-                  <span className="num">1</span>
-                  <span>
-                    <strong>Place your order.</strong> Nothing is charged online.
-                  </span>
-                </li>
-                <li>
-                  <span className="num">2</span>
-                  <span>
-                    <strong>We call or WhatsApp you</strong> to confirm the price and delivery day.
-                  </span>
-                </li>
-                <li>
-                  <span className="num">3</span>
-                  <span>
-                    <strong>You pay by UPI{ready ? ", or cash on delivery" : " (an advance to begin the work)"}.</strong> We deliver and set it up.
-                  </span>
-                </li>
-              </ol>
-            </div>
           </div>
         </div>
+
+        <section aria-label="At a glance" className="glance">
+          {glance(p, desc.blocks).map((g) => (
+            <div key={g.label}>
+              <span className="muted small">{g.label}</span>
+              <strong>{g.value}</strong>
+            </div>
+          ))}
+        </section>
+
+        <Customise piece={p.name} finishes={finishOptions(desc.blocks)} size={sizeLine} wood={p.wood_type} />
+
+        <section className="detail-grid" aria-labelledby="about">
+          <div className="stack" style={{ gap: 14 }}>
+            <h2 id="about">About this piece</h2>
+            <ProductDescription blocks={desc.blocks} hide={p.dimensions_mm ? /^dimensions/i : undefined} />
+            <dl className="specs" style={{ margin: 0 }}>
+              {specs.map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="small muted">Wood is a natural material, so grain and colour differ from piece to piece.</p>
+          </div>
+          <div className="card warm stack" style={{ gap: 12, alignSelf: "start" }}>
+            <h2 style={{ fontSize: "1.5rem" }}>Looking after it</h2>
+            <ul className="tick">
+              {CARE[p.item_type === "sculpture" ? "sculpture" : "furniture"].map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="stack" aria-labelledby="buying" style={{ gap: 14 }}>
+          <h2 id="buying">Delivery, payment and returns</h2>
+          <ol className="how">
+            <li>
+              <span className="num">1</span>
+              <strong>Place your order</strong>
+              <span className="muted small">Nothing is charged online.</span>
+            </li>
+            <li>
+              <span className="num">2</span>
+              <strong>We call or WhatsApp you</strong>
+              <span className="muted small">To confirm the price{p.made_to_order ? ", the making time" : ""} and the delivery day.</span>
+            </li>
+            <li>
+              <span className="num">3</span>
+              <strong>You pay by UPI</strong>
+              <span className="muted small">{ready ? "In advance, or cash or UPI on delivery." : "An advance to begin the work."}</span>
+            </li>
+            <li>
+              <span className="num">4</span>
+              <strong>We deliver and set it up</strong>
+              <span className="muted small">With our own team. Tell us within 48 hours if anything is wrong and we put it right.</span>
+            </li>
+          </ol>
+          <p className="small muted">
+            Details: <Link href="/delivery">delivery policy</Link>, <Link href="/refunds">cancellations and refunds</Link>, <Link href="/terms">terms of sale</Link>.
+          </p>
+        </section>
+
+        <ProductQA product={p} />
+
+        <div className="row">
+          {ask ? (
+            <a className="btn outline" href={ask} target="_blank" rel="noopener noreferrer">
+              Still unsure? Ask on WhatsApp
+            </a>
+          ) : (
+            <Link className="btn outline" href="/custom">
+              Still unsure? Send us a question
+            </Link>
+          )}
+        </div>
+
         {related.length > 0 && (
           <div className="related stack" style={{ gap: 20, marginTop: 24 }}>
             <h2>More like this</h2>

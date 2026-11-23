@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { EnquiryForm } from "@/components/EnquiryForm";
 
 export const metadata: Metadata = {
@@ -27,7 +28,10 @@ export default function CustomPage() {
       </section>
       <section className="section">
         <div className="wrap two-col form-cols">
-          <EnquiryForm />
+          {/* Suspense: the form reads ?piece= and ?finish= from the address in the browser */}
+          <Suspense fallback={<p className="muted">Loading…</p>}>
+            <EnquiryForm />
+          </Suspense>
           <aside className="card warm stack" aria-label="How it works">
             <h2 style={{ fontSize: "1.8rem" }}>How it works</h2>
             <ol className="steps">
