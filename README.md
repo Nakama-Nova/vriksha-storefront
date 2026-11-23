@@ -1,4 +1,4 @@
-# Vriksha Studio storefront
+﻿# Vriksha Studio storefront
 
 The public website for Vriksha Studio: wood furniture and carvings. Next.js (App Router, TypeScript) talking to the shop's backend, [nakamadesk-backend](https://github.com/Nakama-Nova/nakamadesk-backend), through its `/public/*` API.
 
@@ -28,7 +28,7 @@ npm install
 npm run dev                     # http://localhost:3000
 ```
 
-Checks: `npm run lint`, `npx next typegen` then `npx tsc --noEmit`, `npm run build`. Storefront CI (`.github/workflows/ci.yml`) runs the same four steps on Node 22, with no backend reachable, so the build must work without one.
+Checks: `npm run lint`, `npm test`, `npx next typegen` then `npx tsc --noEmit`, `npm run build`. Storefront CI (`.github/workflows/ci.yml`) runs the same five steps on Node 22, with no backend reachable, so the build must work without one. The tests (`tests/`, run by Vitest) cover the logic that handles money, sizes, filters, the cart and the server's messages; add one whenever you change a rule in `lib/`.
 
 This project uses a recent Next.js with breaking changes from older versions (see `AGENTS.md`); read the guide in `node_modules/next/dist/docs/` before changing framework-level code.
 

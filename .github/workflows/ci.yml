@@ -22,6 +22,8 @@ jobs:
       - run: npm ci
       - name: Lint
         run: npm run lint
+      - name: Tests
+        run: npm test
       # LayoutProps/PageProps are route types Next generates; make them before tsc.
       - name: Generate route types
         run: npx next typegen
