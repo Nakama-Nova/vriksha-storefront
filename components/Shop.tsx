@@ -20,6 +20,8 @@ export function Shop({ products }: { products: Product[] }) {
   // Search is typed fast, so it is kept here and copied into the address a moment later.
   const [q, setQ] = useState(params.get("q") ?? "");
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // On phones the search, wood, price and sort boxes are folded away so the pieces come first
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   /** Change some parts of the address. A null or empty value removes that choice. */
   function update(changes: Record<string, string | null>) {
@@ -96,7 +98,10 @@ export function Shop({ products }: { products: Product[] }) {
         </div>
       )}
 
-      <div className="shop-tools">
+      <button type="button" className="btn outline filters-toggle" aria-expanded={toolsOpen} aria-controls="shop-tools" onClick={() => setToolsOpen((o) => !o)}>
+        {toolsOpen ? "Hide search and filters" : `Search, filters and sort${active > 0 ? ` (${active} on)` : ""}`}
+      </button>
+      <div id="shop-tools" className={`shop-tools${toolsOpen ? " open" : ""}`}>
         <div className="field">
           <label htmlFor="q">Search</label>
           <input id="q" className="input" type="search" placeholder="Search pieces" value={q} onChange={(e) => onSearch(e.target.value)} />

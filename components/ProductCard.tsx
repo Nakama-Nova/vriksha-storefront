@@ -14,7 +14,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
         <Photo
           image={product.images[0] ?? product.renders[0]}
           name={product.name}
-          sizes="(max-width: 520px) 100vw, (max-width: 740px) 50vw, (max-width: 1000px) 33vw, 280px"
+          sizes="(max-width: 740px) 50vw, (max-width: 1000px) 33vw, 280px"
           priority={priority}
         />
         {product.made_to_order ? (
