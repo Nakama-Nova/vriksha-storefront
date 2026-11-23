@@ -1,15 +1,17 @@
-import { TESTIMONIALS } from "@/lib/testimonials";
+import Link from "next/link";
+import { getComments } from "@/lib/api";
 
-/** Customers' own words (lib/testimonials.ts). Shows nothing until there is at least one real comment. */
-export function Testimonials() {
-  if (!TESTIMONIALS.length) return null;
+/** What customers said: comments that staff approved (customers send them from /comment). Shows nothing while there are none. */
+export async function Testimonials() {
+  const comments = await getComments();
+  if (!comments.length) return null;
   return (
     <section className="section" aria-labelledby="voices">
       <div className="wrap stack" style={{ gap: 28 }}>
         <h2 id="voices">What our customers say</h2>
         <div className="voices">
-          {TESTIMONIALS.map((t) => (
-            <figure key={`${t.name}-${t.text.slice(0, 20)}`} className="voice">
+          {comments.map((t) => (
+            <figure key={`${t.name}-${t.text.slice(0, 24)}`} className="voice">
               <blockquote>
                 <p>{t.text}</p>
               </blockquote>
@@ -20,6 +22,9 @@ export function Testimonials() {
             </figure>
           ))}
         </div>
+        <p className="small muted">
+          Ordered from us? <Link href="/comment">Share your experience</Link>.
+        </p>
       </div>
     </section>
   );
