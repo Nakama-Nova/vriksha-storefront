@@ -1588,3 +1588,126 @@ model-viewer {
     gap: 28px;
   }
 }
+
+
+/* Ribbons staff put on a product (New, Bestseller...). Colours are chosen for readable text. */
+.ribbon,
+.ribbon-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+  background: var(--brown);
+}
+.ribbon {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  padding: 7px 12px 7px 10px;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 0 1px 4px rgba(42, 26, 16, 0.25);
+  z-index: 1;
+}
+.ribbon-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.ribbon-new {
+  background: #2f7d4f;
+}
+.ribbon-bestseller {
+  background: var(--gold);
+  color: var(--text);
+}
+.ribbon-few_left {
+  background: #b3261e;
+}
+.ribbon-offer {
+  background: var(--brown);
+}
+
+
+/* The home page's feature banner: words, and a picture or a video that plays on request */
+.feature {
+  display: grid;
+  gap: 32px;
+  align-items: center;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-left: 5px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--warm);
+  max-width: calc(var(--wrap) - 40px);
+}
+.feature.with-media {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+.feature.with-media > :first-child {
+  order: 2;
+}
+.banner-media {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #2a1706;
+}
+.banner-image,
+.banner-video {
+  aspect-ratio: 16 / 9;
+}
+.banner-video.vertical {
+  aspect-ratio: 9 / 14;
+  max-height: 560px;
+  max-width: 340px;
+  margin-inline: auto;
+}
+.banner-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.banner-poster {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #fbf6ec;
+  text-align: center;
+  padding: 12px;
+}
+.banner-poster a {
+  color: #fbf6ec;
+}
+.banner-play {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 3px solid #fbf6ec;
+  background: rgba(191, 131, 11, 0.95);
+  color: #2a1706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.banner-play:hover {
+  background: var(--gold);
+}
+@media (max-width: 860px) {
+  .feature.with-media {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 18px;
+  }
+  .feature.with-media > :first-child {
+    order: 0;
+  }
+}

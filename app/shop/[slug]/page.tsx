@@ -14,6 +14,7 @@ import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { describe } from "@/lib/describe";
 import { rupees, sizeRows, sizeSummary } from "@/lib/format";
 import { CARE, finishOptions, glance } from "@/lib/productInfo";
+import { ribbonText } from "@/lib/ribbon";
 import { relatedTo } from "@/lib/shop";
 
 export const revalidate = 60;
@@ -94,6 +95,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
           <ProductGallery images={[...p.images, ...p.renders]} modelUrl={p.model_url} name={p.name} />
           <div className="stack" style={{ gap: 18 }}>
             <div className="row" style={{ gap: 8 }}>
+              {ribbonText(p.ribbon) && <span className={`ribbon-chip ribbon-${p.ribbon}`}>{ribbonText(p.ribbon)}</span>}
               {p.made_to_order && (
                 <span className="chip">Made to order{p.lead_time_days ? ` · about ${p.lead_time_days} days` : ""}</span>
               )}

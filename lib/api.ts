@@ -20,6 +20,7 @@ export type Product = {
   images: Image[];
   renders: Image[]; // finished-piece render pictures
   model_url: string | null;
+  ribbon?: string | null; // new, bestseller, few_left or offer: a label staff put on the photo
 };
 
 export type OrderLine = { name: string; quantity: number; unit_price: string };
@@ -205,3 +206,38 @@ export type CommentInput = {
   website: string; // hidden spam trap, stays empty
 };
 export const sendComment = (input: CommentInput) => request<{ status: string }>("/public/comments", JSON_POST(input));
+
+
+// ---- the line in the top bar (staff edit it; see the backend's /site/admin page) ----
+export type Announcement = { message: string; link_url: string | null; link_label: string | null };
+
+/** The announcement to show now, or null (none, switched off, outside its dates, or the backend cannot be reached). */
+export async function getAnnouncement(): Promise<Announcement | null> {
+  try {
+    return await request<Announcement | null>("/public/announcement", REVALIDATE);
+  } catch {
+    return null;
+  }
+}
+
+
+// ---- the feature banner on the home page (staff edit it at the backend's /site/admin page) ----
+export type Banner = {
+  headline: string;
+  body: string | null;
+  media_kind: "none" | "image" | "youtube" | "instagram";
+  image_url: string | null;
+  embed_url: string | null; // built by the server from a fixed template
+  watch_url: string | null;
+  button_url: string | null;
+  button_label: string | null;
+};
+
+/** The banner to show now, or null (none, switched off, outside its dates, or the backend cannot be reached). */
+export async function getBanner(): Promise<Banner | null> {
+  try {
+    return await request<Banner | null>("/public/banner", REVALIDATE);
+  } catch {
+    return null;
+  }
+}
