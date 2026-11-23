@@ -54,6 +54,10 @@ Normal text, [a link to the shop](/shop), lists and **bold** work as usual.
 
 Merge to `main` and the site deploys with the new post. Posts appear in the list, the sitemap and the RSS feed on their own.
 
+### Customer comments
+
+The home page has a "What our customers say" section that appears **only when there is at least one real comment** in `lib/testimonials.ts` (the file explains how to add one). With the list empty, no section is shown. Only add words a customer really wrote or said, with their OK to show them.
+
 ### Newsletter
 
 A sign-up form sits in the footer, on the home page and at the end of every Journal post. It uses double opt-in: the visitor gets an email with a link, and is on the list only after tapping it. The backend (`/public/newsletter/subscribe`, `/confirm`, `/unsubscribe`) stores the consent and keeps the list in Brevo; the owner writes and sends each issue in Brevo's own editor. The backend needs `BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME` and `STOREFRONT_URL` (this site's address), so **do not deploy the forms before the backend has them**: until then the form answers "The newsletter is not set up yet."
