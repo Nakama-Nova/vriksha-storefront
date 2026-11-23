@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ApiError, sendComment } from "@/lib/api";
 import { trackEvent } from "@/lib/track";
@@ -22,9 +21,7 @@ const RULES = {
 const SERVER_NAMES: Record<string, string> = { order_number: "number", display_name: "name", text: "comment" };
 
 /** A customer's comment. Needs the order number and the phone it was placed with, the same as tracking. */
-export function CommentForm() {
-  const params = useSearchParams();
-  const initial = (params.get("order") ?? "").toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 40);
+export function CommentForm({ initial = "" }: { initial?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const { errors, setErrors, onInput, show } = useFieldErrors(ORDER);

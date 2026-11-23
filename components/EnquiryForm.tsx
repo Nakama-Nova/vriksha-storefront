@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ApiError, sendEnquiry, type PublicOrder } from "@/lib/api";
 import { PHONE, whatsappUrl } from "@/lib/config";
@@ -18,16 +17,16 @@ const RULES = {
   description: [rules.minLength(5, "Describe your idea in a few words")],
 };
 
-export function EnquiryForm() {
+/** What a product page's "Ask for a custom version" link filled in (read on the server, see app/custom/page.tsx). */
+export type EnquiryStart = { piece: string; finish: string; wood: string; size: string };
+
+export function EnquiryForm({ start }: { start: EnquiryStart }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const { errors, setErrors, onInput, show } = useFieldErrors(ORDER);
   const hydrated = useHydrated();
   const [done, setDone] = useState<PublicOrder | null>(null);
-  // A product page's "Ask for a custom version" link fills in what it can (piece, finish, size, wood)
-  const params = useSearchParams();
-  const piece = (params.get("piece") ?? "").slice(0, 150);
-  const finish = (params.get("finish") ?? "").slice(0, 100);
+  const { piece, finish } = start;
   const startWhat = piece ? `${piece} (custom version)` : "";
   const startNote = [finish && `Finish: ${finish}.`, piece && "Tell us what you would like changed."].filter(Boolean).join(" ");
 
@@ -109,11 +108,11 @@ export function EnquiryForm() {
       <div className="grid2">
         <div className="field">
           <label htmlFor="wood">Wood preference</label>
-          <input id="wood" name="wood" className="input" maxLength={100} defaultValue={(params.get("wood") ?? "").slice(0, 100)} placeholder="Teak, rosewood, not sure" />
+          <input id="wood" name="wood" className="input" maxLength={100} defaultValue={start.wood} placeholder="Teak, rosewood, not sure" />
         </div>
         <div className="field">
           <label htmlFor="size">Approx. size (L × W × H, mm)</label>
-          <input id="size" name="size" className="input" maxLength={100} defaultValue={(params.get("size") ?? "").slice(0, 100)} placeholder="e.g. 1200 × 600 × 750" />
+          <input id="size" name="size" className="input" maxLength={100} defaultValue={start.size} placeholder="e.g. 1200 × 600 × 750" />
         </div>
       </div>
       <div className="field">
