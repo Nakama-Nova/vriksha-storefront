@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Shop } from "@/components/Shop";
 import { getCatalog } from "@/lib/api";
+import { CATALOGUE_NOTICE } from "@/lib/hours";
 
 export const revalidate = 60;
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export default async function ShopPage() {
       <div className="wrap stack" style={{ gap: 28 }}>
         <h1>Shop</h1>
         {products === null ? (
-          <div className="alert info">We could not load the catalogue just now. Please refresh in a moment.</div>
+          <div className="alert info">{CATALOGUE_NOTICE}</div>
         ) : (
           // Suspense: Shop reads ?category= from the URL in the browser
           <Suspense fallback={<p className="muted">Loading…</p>}>
