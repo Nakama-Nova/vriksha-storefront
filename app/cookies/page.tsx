@@ -48,7 +48,7 @@ export default function CookiesPage() {
 
       <h2>What we do not do</h2>
       <ul>
-        <li>We set no advertising, tracking or analytics cookies, and use no tracking pixels.</li>
+        <li>We set no advertising, tracking or analytics cookies, and use no tracking pixels or outside analytics services.</li>
         <li>We do not use social-media buttons that follow you around the web.</li>
         <li>Our fonts are served from this website itself, not from an outside font service.</li>
       </ul>
@@ -68,7 +68,7 @@ export default function CookiesPage() {
 
       <h2>If this changes</h2>
       <p>
-        If we ever add anything that is not strictly necessary, such as visitor statistics, we will first ask for your permission with a clear choice, and update this page. See also our <Link href="/privacy">privacy policy</Link>.
+        If we ever add anything that sets cookies or follows you, we will first ask for your permission with a clear choice, and update this page. Our visitor numbers work without cookies and are described in our <Link href="/privacy">privacy policy</Link>.
       </p>
     </LegalPage>
   );

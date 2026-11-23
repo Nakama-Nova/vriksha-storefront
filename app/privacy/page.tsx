@@ -45,6 +45,7 @@ export default function PrivacyPage() {
         <li>To send you our newsletter (new pieces and Journal posts), if you subscribed. Every email has an unsubscribe link, and we stop as soon as you use it.</li>
         <li>To keep our accounts and records as the law requires.</li>
         <li>To keep the website secure and to stop misuse, such as repeated automated orders.</li>
+        <li>To count visits so we can see which pieces and pages people look at and where they stop. Each page opened, and a few actions (such as adding to the cart), add one to a daily total on our own server. We store no cookie, address, device or other identifier with it, so we cannot tell visitors apart or follow anyone, and no outside analytics service is used. If your browser sends &ldquo;Do Not Track&rdquo; or Global Privacy Control, we count nothing from you.</li>
       </ul>
       <p>We do not sell your details, and we do not use them for marketing unless you ask us to keep you informed.</p>
 
