@@ -10,7 +10,7 @@ import { TrustPoints } from "@/components/TrustPoints";
 import { getCatalog, getProduct, mediaUrl, shareImageUrl } from "@/lib/api";
 import { SITE_URL, whatsappUrl } from "@/lib/config";
 import { describe } from "@/lib/describe";
-import { rupees, sizeText } from "@/lib/format";
+import { rupees, sizeRows, sizeSummary } from "@/lib/format";
 import { relatedTo } from "@/lib/shop";
 
 export const revalidate = 60;
@@ -42,11 +42,11 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
 
   const desc = describe(p.short_desc, p.name);
   const ready = !p.made_to_order && p.in_stock;
-  const size = sizeText(p.dimensions_mm);
+  const sizeLine = sizeSummary(p.dimensions_mm);
   const specs: [string, string][] = [];
   specs.push(["Type", p.item_type === "sculpture" ? "Sculpture" : "Furniture"]);
   if (p.wood_type) specs.push(["Wood", p.wood_type]);
-  if (size) specs.push(["Size", size]);
+  for (const r of sizeRows(p.dimensions_mm)) specs.push([r.label, r.value]);
   if (p.category) specs.push(["Category", p.category]);
   const ask = whatsappUrl(`Hello, I would like to know more about "${p.name}" (${SITE_URL}/shop/${p.slug}).`);
 
@@ -57,6 +57,9 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
     name: p.name,
     description: summary(p),
     brand: { "@type": "Brand", name: "Vriksha Studio" },
+    ...(p.dimensions_mm?.l ? { depth: { "@type": "QuantitativeValue", value: p.dimensions_mm.l, unitCode: "MMT" } } : {}),
+    ...(p.dimensions_mm?.w ? { width: { "@type": "QuantitativeValue", value: p.dimensions_mm.w, unitCode: "MMT" } } : {}),
+    ...(p.dimensions_mm?.h ? { height: { "@type": "QuantitativeValue", value: p.dimensions_mm.h, unitCode: "MMT" } } : {}),
     url: `${SITE_URL}/shop/${p.slug}`,
     image: [...p.images, ...p.renders].map((i) => mediaUrl(i.url)),
     offers: {
@@ -104,6 +107,11 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
                 Any delivery charge is told to you before you pay.
               </p>
             </div>
+            {sizeLine && (
+              <p className="size-line">
+                <strong>Size:</strong> {sizeLine}
+              </p>
+            )}
             {desc.intro && <p className="lead-text">{desc.intro}</p>}
             <AddToCart product={p} />
             <DeliveryCheck />
@@ -121,7 +129,7 @@ export default async function ProductPage(props: PageProps<"/shop/[slug]">) {
               )}
               <details className="card faq" open={desc.blocks.length === 0}>
                 <summary>
-                  <strong>Specifications</strong>
+                  <strong>Specifications and size</strong>
                 </summary>
                 <dl className="specs" style={{ margin: "10px 0 0" }}>
                   {specs.map(([k, v]) => (

@@ -1474,3 +1474,11 @@ model-viewer {
   font-size: 1.05rem;
   line-height: 1.65;
 }
+
+
+.size-line {
+  padding: 10px 14px;
+  border-left: 3px solid var(--gold);
+  background: var(--warm);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
