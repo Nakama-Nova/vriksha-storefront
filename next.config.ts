@@ -34,6 +34,8 @@ const csp = [
   `img-src 'self' data: blob: ${apiOrigin}`,
   "font-src 'self' data:",
   `connect-src 'self' data: blob: ${apiOrigin} https://www.gstatic.com`,
+  // Video players for the home banner. Their frames are only created after a visitor presses play (components/BannerMedia.tsx).
+  "frame-src https://www.youtube-nocookie.com https://www.instagram.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",

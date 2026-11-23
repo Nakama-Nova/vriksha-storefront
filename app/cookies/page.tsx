@@ -57,6 +57,9 @@ export default function CookiesPage() {
       <p>
         Some buttons open other services, such as WhatsApp or your UPI app. Those services have their own cookies and policies, which apply once you are on them.
       </p>
+      <p>
+        We sometimes show a YouTube video or an Instagram reel on the home page. Nothing is loaded from YouTube or Instagram until you press the play button. When you do, their player loads inside our page (YouTube through its privacy-enhanced address, youtube-nocookie.com) and it may set its own cookies, under their policies. If you do not press play, nothing is loaded from them.
+      </p>
 
       <h2>Your choices</h2>
       <p>

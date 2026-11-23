@@ -219,3 +219,25 @@ export async function getAnnouncement(): Promise<Announcement | null> {
     return null;
   }
 }
+
+
+// ---- the feature banner on the home page (staff edit it at the backend's /site/admin page) ----
+export type Banner = {
+  headline: string;
+  body: string | null;
+  media_kind: "none" | "image" | "youtube" | "instagram";
+  image_url: string | null;
+  embed_url: string | null; // built by the server from a fixed template
+  watch_url: string | null;
+  button_url: string | null;
+  button_label: string | null;
+};
+
+/** The banner to show now, or null (none, switched off, outside its dates, or the backend cannot be reached). */
+export async function getBanner(): Promise<Banner | null> {
+  try {
+    return await request<Banner | null>("/public/banner", REVALIDATE);
+  } catch {
+    return null;
+  }
+}

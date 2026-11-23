@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { FeatureBanner } from "@/components/FeatureBanner";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { ProductCard } from "@/components/ProductCard";
 import { Testimonials } from "@/components/Testimonials";
@@ -53,6 +54,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <FeatureBanner />
 
       <section className="trust-strip" aria-label="Why buy from us">
         <div className="wrap">
