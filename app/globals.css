@@ -1588,3 +1588,42 @@ model-viewer {
     gap: 28px;
   }
 }
+
+
+/* Ribbons staff put on a product (New, Bestseller...). Colours are chosen for readable text. */
+.ribbon,
+.ribbon-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: #fff;
+  background: var(--brown);
+}
+.ribbon {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  padding: 7px 12px 7px 10px;
+  border-radius: 0 6px 6px 0;
+  box-shadow: 0 1px 4px rgba(42, 26, 16, 0.25);
+  z-index: 1;
+}
+.ribbon-chip {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.ribbon-new {
+  background: #2f7d4f;
+}
+.ribbon-bestseller {
+  background: var(--gold);
+  color: var(--text);
+}
+.ribbon-few_left {
+  background: #b3261e;
+}
+.ribbon-offer {
+  background: var(--brown);
+}

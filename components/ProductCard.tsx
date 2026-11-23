@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { Product } from "@/lib/api";
 import { rupees } from "@/lib/format";
+import { ribbonText } from "@/lib/ribbon";
 import { Photo } from "./Photo";
 
 /** `priority`: the card is in the first row, in view when the page opens, so its photo loads at once rather than lazily. */
 export function ProductCard({ product, priority }: { product: Product; priority?: boolean }) {
   const ready = !product.made_to_order && product.in_stock;
+  const ribbon = ribbonText(product.ribbon);
   const facts = [product.wood_type, product.category].filter(Boolean).join(" · ");
   return (
     <Link href={`/shop/${product.slug}`} className="product-card">
@@ -17,6 +19,7 @@ export function ProductCard({ product, priority }: { product: Product; priority?
           sizes="(max-width: 740px) 50vw, (max-width: 1000px) 33vw, 280px"
           priority={priority}
         />
+        {ribbon && <span className={`ribbon ribbon-${product.ribbon}`}>{ribbon}</span>}
         {product.made_to_order ? (
           <span className="chip pc-badge">Made to order{product.lead_time_days ? ` · about ${product.lead_time_days} days` : ""}</span>
         ) : ready ? (

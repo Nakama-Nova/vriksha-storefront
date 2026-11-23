@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { PageBanner } from "@/components/PageBanner";
@@ -45,15 +46,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd).replace(/</g, "\\u003c") }} />
-        <div className="announce">
-          Made to order in our own workshop · Nothing to pay online until we call you
-          {PHONE && (
-            <>
-              {" "}
-              · <a href={`tel:${PHONE.replace(/\s/g, "")}`}>Call {PHONE}</a>
-            </>
-          )}
-        </div>
+        <AnnouncementBar />
         <Header />
         <PageBanner />
         <SideArt />
