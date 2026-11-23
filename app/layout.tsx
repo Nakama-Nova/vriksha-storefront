@@ -4,6 +4,7 @@ import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { PageBanner } from "@/components/PageBanner";
+import { PageViews } from "@/components/PageViews";
 import { SideArt } from "@/components/SideArt";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { PHONE, SITE_URL } from "@/lib/config";
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(orgLd).replace(/</g, "\\u003c") }} />
+        <PageViews />
         <AnnouncementBar />
         <Header />
         <PageBanner />

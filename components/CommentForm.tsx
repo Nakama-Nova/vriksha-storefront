@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ApiError, sendComment } from "@/lib/api";
+import { trackEvent } from "@/lib/track";
 
 const MAX = 800;
 
@@ -33,6 +34,7 @@ export function CommentForm() {
         website: text("website"),
       });
       setDone(true);
+      trackEvent("comment_sent");
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 404

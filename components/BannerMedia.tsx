@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { mediaUrl } from "@/lib/api";
 import { API_URL } from "@/lib/config";
+import { trackEvent } from "@/lib/track";
 
 // Only these two players may ever be put in a frame (the page's security policy says the same).
 const PLAYERS = ["https://www.youtube-nocookie.com/embed/", "https://www.instagram.com/"];
@@ -51,7 +52,10 @@ export function BannerMedia({ kind, imageUrl, embedUrl, watchUrl, title }: Props
         />
       ) : (
         <div className="banner-poster">
-          <button type="button" className="banner-play" onClick={() => setPlaying(true)} aria-label={`Play the ${kind === "instagram" ? "reel" : "video"}: ${title}`}>
+          <button type="button" className="banner-play" onClick={() => {
+              setPlaying(true);
+              trackEvent("video_play");
+            }} aria-label={`Play the ${kind === "instagram" ? "reel" : "video"}: ${title}`}>
             <svg viewBox="0 0 24 24" width="34" height="34" fill="currentColor" aria-hidden="true">
               <path d="M8 5.5v13l11-6.5z" />
             </svg>

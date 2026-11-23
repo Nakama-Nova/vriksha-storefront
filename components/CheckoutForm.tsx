@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { ApiError, checkDelivery, placeOrder, type CheckoutInput } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { rupees } from "@/lib/format";
+import { trackEvent } from "@/lib/track";
 
 export const LAST_ORDER_KEY = "vriksha-last-order";
 
@@ -17,6 +18,11 @@ export function CheckoutForm() {
   const [error, setError] = useState("");
   // Does the shop deliver to the pincode typed so far? Checked as soon as 6 digits are in, so a "no" is not found out at the end.
   const [area, setArea] = useState<"idle" | "yes" | "no">("idle");
+
+  const hasItems = items.length > 0;
+  useEffect(() => {
+    if (ready && hasItems) trackEvent("checkout_open");
+  }, [ready, hasItems]);
 
   async function onPincode(value: string) {
     if (!/^\d{6}$/.test(value)) return setArea("idle");
@@ -65,6 +71,7 @@ export function CheckoutForm() {
     try {
       const order = await placeOrder(input);
       sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify({ ...order, name: input.name, pay_option: input.pay_option }));
+      trackEvent("order_placed");
       clear();
       router.push("/thanks");
     } catch (err) {

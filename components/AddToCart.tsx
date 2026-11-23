@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { mediaUrl, type Product } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { rupees } from "@/lib/format";
+import { trackEvent } from "@/lib/track";
 
 export function AddToCart({ product }: { product: Product }) {
   const { add } = useCart();
@@ -44,6 +45,7 @@ export function AddToCart({ product }: { product: Product }) {
       qty,
     );
     setAdded(qty);
+    trackEvent("add_to_cart");
   }
 
   if (soldOut) {

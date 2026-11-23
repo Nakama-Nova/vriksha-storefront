@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ApiError, sendEnquiry, type PublicOrder } from "@/lib/api";
 import { PHONE, whatsappUrl } from "@/lib/config";
+import { trackEvent } from "@/lib/track";
 
 export function EnquiryForm() {
   const [busy, setBusy] = useState(false);
@@ -35,6 +36,7 @@ export function EnquiryForm() {
           budget: text("budget") || undefined,
         }),
       );
+      trackEvent("enquiry_sent");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {
