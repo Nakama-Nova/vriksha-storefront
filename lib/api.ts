@@ -42,6 +42,8 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
+    /** For a 422: what the server said about each field, by the server's field name. */
+    public fields: Record<string, string> = {},
   ) {
     super(message);
   }
@@ -63,6 +65,19 @@ export const mediaUrl = (path: string) => (path.startsWith("http") ? path : `${A
 export function shareImageUrl(path: string): string {
   const src = mediaUrl(path);
   return src.startsWith(`${API_URL}/media/`) ? `${SITE_URL}/_next/image?url=${encodeURIComponent(src)}&w=640&q=75` : src;
+}
+
+/** A 422's per-field messages: {field: "message"}, first message per field. */
+export function fieldErrorsFrom(body: unknown): Record<string, string> {
+  const detail = (body as { detail?: unknown } | null)?.detail;
+  const out: Record<string, string> = {};
+  if (Array.isArray(detail)) {
+    for (const item of detail as { msg?: string; loc?: unknown[] }[]) {
+      const field = Array.isArray(item.loc) && item.loc.length ? String(item.loc[item.loc.length - 1]) : "";
+      if (field && item.msg && !(field in out)) out[field] = item.msg.replace(/^Value error, /, "");
+    }
+  }
+  return out;
 }
 
 /** FastAPI errors: {detail: "text"} or {detail: [{msg, loc}]} for validation. */
@@ -90,7 +105,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     try {
       body = await res.json();
     } catch {}
-    throw new ApiError(messageFrom(body, res.status), res.status);
+    throw new ApiError(messageFrom(body, res.status), res.status, fieldErrorsFrom(body));
   }
   return res.json() as Promise<T>;
 }

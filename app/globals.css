@@ -1711,3 +1711,26 @@ model-viewer {
     order: 0;
   }
 }
+
+
+/* Form errors: next to the field, in words, and an outline */
+.field-error {
+  color: var(--bad);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.input[aria-invalid="true"],
+.textarea[aria-invalid="true"],
+.select[aria-invalid="true"] {
+  border-color: var(--bad);
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.15);
+}
+.error-summary ul {
+  margin: 6px 0 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 4px;
+}
+.error-summary a {
+  color: inherit;
+}

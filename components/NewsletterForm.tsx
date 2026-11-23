@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ApiError, subscribeNewsletter, type NewsletterSource } from "@/lib/api";
+import { useHydrated } from "./FormErrors";
 
 /**
  * Email sign-up. Double opt-in: the backend emails a link and the person is only on the list once they
@@ -12,6 +13,7 @@ export function NewsletterForm({ source, dark = false }: { source: NewsletterSou
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [sent, setSent] = useState(false);
+  const hydrated = useHydrated();
   const id = `news-${source}`;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -52,7 +54,7 @@ export function NewsletterForm({ source, dark = false }: { source: NewsletterSou
             <input name="website" type="text" tabIndex={-1} autoComplete="off" />
           </label>
         </div>
-        <button type="submit" className={`btn ${dark ? "gold" : "primary"}`} disabled={busy}>
+        <button type="submit" className={`btn ${dark ? "gold" : "primary"}`} disabled={busy || !hydrated}>
           {busy ? "Sending…" : "Subscribe"}
         </button>
       </div>

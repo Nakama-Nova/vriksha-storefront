@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ApiError, trackOrder, type PublicOrder } from "@/lib/api";
 import { dateText, rupees } from "@/lib/format";
+import { check, rules } from "@/lib/formErrors";
+import { ErrorSummary, FieldError, fieldA11y, useFieldErrors, useHydrated } from "./FormErrors";
 
 // Order lifecycle (backend): draft -> confirmed -> in_production -> ready -> delivered
 const STEPS = [
@@ -35,10 +37,19 @@ function Progress({ status }: { status: string }) {
   );
 }
 
+const ORDER = ["number", "phone"];
+const LABELS: Record<string, string> = { number: "Order number", phone: "Phone number" };
+const RULES = {
+  number: [rules.required("Enter your order number, like ORD-2026-0014")],
+  phone: [rules.mobile("Enter the 10-digit mobile number you ordered with")],
+};
+
 /** `initialNumber`: the order number from the link in our emails, so the customer only has to add their phone number. */
 export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const { errors, setErrors, onInput, show } = useFieldErrors(ORDER);
+  const hydrated = useHydrated();
   const [order, setOrder] = useState<PublicOrder | null>(null);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -46,6 +57,9 @@ export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
     setError("");
     setOrder(null);
     const f = new FormData(e.currentTarget);
+    const found = check(f, RULES);
+    if (Object.keys(found).length) return show(found);
+    setErrors({});
     setBusy(true);
     try {
       setOrder(await trackOrder(String(f.get("number") ?? ""), String(f.get("phone") ?? "")));
@@ -64,10 +78,12 @@ export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
 
   return (
     <div className="stack" style={{ gap: 28 }}>
-      <form className="row" style={{ alignItems: "flex-end" }} onSubmit={onSubmit}>
+      <ErrorSummary errors={errors} labels={LABELS} order={ORDER} />
+      <form className="row" style={{ alignItems: "flex-end" }} onSubmit={onSubmit} onInput={onInput} noValidate>
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="number">Order number</label>
-          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" defaultValue={initialNumber} aria-describedby="number-hint" />
+          <input id="number" name="number" className="input" required placeholder="e.g. ORD-2026-0014" autoCapitalize="characters" defaultValue={initialNumber} {...fieldA11y("number", errors, "number-hint")} />
+          <FieldError name="number" errors={errors} />
           <p id="number-hint" className="small muted">
             It starts with ORD- and is in our confirmation email and on the thank-you page.
           </p>
@@ -75,9 +91,10 @@ export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
         <div className="field" style={{ flex: "1 1 220px" }}>
           <label htmlFor="phone">Phone number</label>
           {/* With the order number already filled in from an email link, the phone number is the only thing left to type. */}
-          <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="The number you ordered with" autoFocus={initialNumber !== ""} />
+          <input id="phone" name="phone" className="input" type="tel" required autoComplete="tel" placeholder="The number you ordered with" autoFocus={initialNumber !== ""} {...fieldA11y("phone", errors)} />
+          <FieldError name="phone" errors={errors} />
         </div>
-        <button type="submit" className="btn primary" disabled={busy}>
+        <button type="submit" className="btn primary" disabled={busy || !hydrated}>
           {busy ? "Checking…" : "Track order"}
         </button>
       </form>
