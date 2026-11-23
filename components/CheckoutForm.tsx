@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ApiError, checkDelivery, placeOrder, type CheckoutInput } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { rupees } from "@/lib/format";
+import { ErrorSummary, FieldError, fieldA11y, useFieldErrors, useHydrated } from "./FormErrors";
+import { check, pickFields, rules } from "@/lib/formErrors";
 import { trackEvent } from "@/lib/track";
+
+const ORDER = ["name", "phone", "email", "address", "town", "pincode"];
+const LABELS: Record<string, string> = { name: "Your name", phone: "WhatsApp number", email: "Email", address: "Address", town: "Town or area", pincode: "Pincode" };
+const RULES = {
+  name: [rules.minLength(2, "Enter your name")],
+  phone: [rules.mobile()],
+  email: [rules.optionalEmail()],
+  address: [rules.minLength(5, "Enter your delivery address, like house or flat, street, landmark")],
+  town: [rules.minLength(2, "Enter your town or area")],
+  pincode: [rules.pincode()],
+};
 
 export const LAST_ORDER_KEY = "vriksha-last-order";
 
@@ -16,6 +29,9 @@ export function CheckoutForm() {
   const [pay, setPay] = useState<CheckoutInput["pay_option"]>("advance_upi");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const { errors, setErrors, onInput, show } = useFieldErrors(ORDER);
+  const hydrated = useHydrated();
+  const pinSeq = useRef(0); // so a slow older pincode answer cannot overwrite a newer one
   // Does the shop deliver to the pincode typed so far? Checked as soon as 6 digits are in, so a "no" is not found out at the end.
   const [area, setArea] = useState<"idle" | "yes" | "no">("idle");
 
@@ -25,12 +41,13 @@ export function CheckoutForm() {
   }, [ready, hasItems]);
 
   async function onPincode(value: string) {
+    const mine = ++pinSeq.current;
     if (!/^\d{6}$/.test(value)) return setArea("idle");
     try {
       const r = await checkDelivery(value);
-      setArea(r.serviceable ? "yes" : "no");
+      if (mine === pinSeq.current) setArea(r.serviceable ? "yes" : "no");
     } catch {
-      setArea("idle"); // could not check: say nothing, the shop confirms the address by phone anyway
+      if (mine === pinSeq.current) setArea("idle"); // could not check: say nothing, the shop confirms the address by phone anyway
     }
   }
 
@@ -55,6 +72,9 @@ export function CheckoutForm() {
     e.preventDefault();
     setError("");
     const f = new FormData(e.currentTarget);
+    const found = check(f, RULES);
+    if (Object.keys(found).length) return show(found);
+    setErrors({});
     const text = (k: string) => String(f.get(k) ?? "").trim();
     const input: CheckoutInput = {
       name: text("name"),
@@ -75,24 +95,30 @@ export function CheckoutForm() {
       clear();
       router.push("/thanks");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      const fromServer = err instanceof ApiError ? pickFields(err.fields, {}) : {};
+      const mine = Object.fromEntries(Object.entries(fromServer).filter(([k]) => ORDER.includes(k)));
+      if (Object.keys(mine).length) show(mine);
+      else setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
       setBusy(false);
     }
   }
 
   return (
-    <form className="two-col" onSubmit={onSubmit}>
+    <form className="two-col" onSubmit={onSubmit} onInput={onInput} noValidate>
       <div className="stack" style={{ gap: 24 }}>
+        <ErrorSummary errors={errors} labels={LABELS} order={ORDER} />
         <section className="card stack">
           <h2 style={{ fontSize: "1.6rem" }}>Contact</h2>
           <div className="grid2">
             <div className="field">
               <label htmlFor="name">Your name</label>
-              <input id="name" name="name" className="input" required minLength={2} maxLength={100} autoComplete="name" />
+              <input id="name" name="name" className="input" required minLength={2} maxLength={100} autoComplete="name" {...fieldA11y("name", errors)} />
+              <FieldError name="name" errors={errors} />
             </div>
             <div className="field">
               <label htmlFor="phone">WhatsApp number</label>
-              <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" aria-describedby="phone-note" />
+              <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" {...fieldA11y("phone", errors, "phone-note")} />
+              <FieldError name="phone" errors={errors} />
               <p id="phone-note" className="small muted">
                 We call or WhatsApp this number to confirm.
               </p>
@@ -100,7 +126,8 @@ export function CheckoutForm() {
           </div>
           <div className="field">
             <label htmlFor="email">Email (optional)</label>
-            <input id="email" name="email" className="input" type="email" autoComplete="email" maxLength={254} aria-describedby="email-note" />
+            <input id="email" name="email" className="input" type="email" autoComplete="email" maxLength={254} {...fieldA11y("email", errors, "email-note")} />
+            <FieldError name="email" errors={errors} />
             <p id="email-note" className="small muted">
               If you add one, we email you when we receive your order, when it is confirmed and when we receive a payment. No other emails; see our <Link href="/privacy">privacy policy</Link>.
             </p>
@@ -111,12 +138,14 @@ export function CheckoutForm() {
           <h2 style={{ fontSize: "1.6rem" }}>Delivery address</h2>
           <div className="field">
             <label htmlFor="address">Address</label>
-            <input id="address" name="address" className="input" required minLength={5} maxLength={300} autoComplete="street-address" placeholder="House or flat, street, landmark" />
+            <input id="address" name="address" className="input" required minLength={5} maxLength={300} autoComplete="street-address" placeholder="House or flat, street, landmark" {...fieldA11y("address", errors)} />
+            <FieldError name="address" errors={errors} />
           </div>
           <div className="grid2">
             <div className="field">
               <label htmlFor="town">Town or area</label>
-              <input id="town" name="town" className="input" required minLength={2} maxLength={100} autoComplete="address-level2" />
+              <input id="town" name="town" className="input" required minLength={2} maxLength={100} autoComplete="address-level2" {...fieldA11y("town", errors)} />
+              <FieldError name="town" errors={errors} />
             </div>
             <div className="field">
               <label htmlFor="pincode">Pincode</label>
@@ -130,9 +159,10 @@ export function CheckoutForm() {
                 maxLength={6}
                 autoComplete="postal-code"
                 placeholder="6 digits"
-                aria-describedby="pincode-hint"
                 onChange={(e) => onPincode(e.target.value.trim())}
+                {...fieldA11y("pincode", errors, "pincode-hint")}
               />
+              <FieldError name="pincode" errors={errors} />
               <p id="pincode-hint" className={`field-hint ${area === "yes" ? "ok" : area === "no" ? "bad" : ""}`} aria-live="polite">
                 {area === "yes" && "✓ We deliver to this pincode."}
                 {area === "no" && "We do not deliver here yet. You can still place the order and we will call to see what is possible."}
@@ -203,7 +233,7 @@ export function CheckoutForm() {
             {error}
           </div>
         )}
-        <button type="submit" className="btn primary block" disabled={busy}>
+        <button type="submit" className="btn primary block" disabled={busy || !hydrated}>
           {busy ? "Placing order…" : "Place order (nothing to pay now)"}
         </button>
         <p className="small muted">

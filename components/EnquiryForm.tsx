@@ -6,10 +6,23 @@ import { useState, type FormEvent } from "react";
 import { ApiError, sendEnquiry, type PublicOrder } from "@/lib/api";
 import { PHONE, whatsappUrl } from "@/lib/config";
 import { trackEvent } from "@/lib/track";
+import { ErrorSummary, FieldError, fieldA11y, useFieldErrors, useHydrated } from "./FormErrors";
+import { check, pickFields, rules } from "@/lib/formErrors";
+
+const ORDER = ["name", "phone", "what", "description"];
+const LABELS: Record<string, string> = { name: "Your name", phone: "WhatsApp number", what: "What would you like made", description: "Your idea" };
+const RULES = {
+  name: [rules.minLength(2, "Enter your name")],
+  phone: [rules.mobile()],
+  what: [rules.minLength(2, "Say what you would like made, like a door frame or a dining table")],
+  description: [rules.minLength(5, "Describe your idea in a few words")],
+};
 
 export function EnquiryForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const { errors, setErrors, onInput, show } = useFieldErrors(ORDER);
+  const hydrated = useHydrated();
   const [done, setDone] = useState<PublicOrder | null>(null);
   // A product page's "Ask for a custom version" link fills in what it can (piece, finish, size, wood)
   const params = useSearchParams();
@@ -22,6 +35,9 @@ export function EnquiryForm() {
     e.preventDefault();
     setError("");
     const f = new FormData(e.currentTarget);
+    const found = check(f, RULES);
+    if (Object.keys(found).length) return show(found);
+    setErrors({});
     const text = (k: string) => String(f.get(k) ?? "").trim();
     setBusy(true);
     try {
@@ -38,7 +54,10 @@ export function EnquiryForm() {
       );
       trackEvent("enquiry_sent");
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
+      const fromServer = err instanceof ApiError ? pickFields(err.fields, {}) : {};
+      const mine = Object.fromEntries(Object.entries(fromServer).filter(([k]) => ORDER.includes(k)));
+      if (Object.keys(mine).length) show(mine);
+      else setError(err instanceof ApiError ? err.message : "Something went wrong. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -68,20 +87,24 @@ export function EnquiryForm() {
   }
 
   return (
-    <form className="card stack" onSubmit={onSubmit} style={{ gap: 18 }}>
+    <form className="card stack" onSubmit={onSubmit} onInput={onInput} noValidate style={{ gap: 18 }}>
+      <ErrorSummary errors={errors} labels={LABELS} order={ORDER} />
       <div className="grid2">
         <div className="field">
           <label htmlFor="name">Your name</label>
-          <input id="name" name="name" className="input" required minLength={2} maxLength={100} autoComplete="name" />
+          <input id="name" name="name" className="input" required minLength={2} maxLength={100} autoComplete="name" {...fieldA11y("name", errors)} />
+          <FieldError name="name" errors={errors} />
         </div>
         <div className="field">
           <label htmlFor="phone">WhatsApp number</label>
-          <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" />
+          <input id="phone" name="phone" className="input" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" {...fieldA11y("phone", errors)} />
+          <FieldError name="phone" errors={errors} />
         </div>
       </div>
       <div className="field">
         <label htmlFor="what">What would you like made?</label>
-        <input id="what" name="what" className="input" required minLength={2} maxLength={200} defaultValue={startWhat} placeholder="e.g. Door frame, dining table" />
+        <input id="what" name="what" className="input" required minLength={2} maxLength={200} defaultValue={startWhat} placeholder="e.g. Door frame, dining table" {...fieldA11y("what", errors)} />
+        <FieldError name="what" errors={errors} />
       </div>
       <div className="grid2">
         <div className="field">
@@ -95,7 +118,8 @@ export function EnquiryForm() {
       </div>
       <div className="field">
         <label htmlFor="description">Describe your idea</label>
-        <textarea id="description" name="description" className="textarea" required minLength={5} maxLength={2000} defaultValue={startNote} placeholder="Style, motifs, where it will be used, anything that matters to you" />
+        <textarea id="description" name="description" className="textarea" required minLength={5} maxLength={2000} defaultValue={startNote} placeholder="Style, motifs, where it will be used, anything that matters to you" {...fieldA11y("description", errors)} />
+        <FieldError name="description" errors={errors} />
       </div>
       <div className="field">
         <label htmlFor="budget">Budget (optional)</label>
@@ -110,7 +134,7 @@ export function EnquiryForm() {
           {error}
         </div>
       )}
-      <button type="submit" className="btn primary block" disabled={busy}>
+      <button type="submit" className="btn primary block" disabled={busy || !hydrated}>
         {busy ? "Sending…" : "Send enquiry"}
       </button>
       <p className="small muted">We use your number only to reply about this enquiry.</p>
