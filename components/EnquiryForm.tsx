@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ApiError, sendEnquiry, type PublicOrder } from "@/lib/api";
 import { PHONE, whatsappUrl } from "@/lib/config";
@@ -9,6 +10,12 @@ export function EnquiryForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState<PublicOrder | null>(null);
+  // A product page's "Ask for a custom version" link fills in what it can (piece, finish, size, wood)
+  const params = useSearchParams();
+  const piece = (params.get("piece") ?? "").slice(0, 150);
+  const finish = (params.get("finish") ?? "").slice(0, 100);
+  const startWhat = piece ? `${piece} (custom version)` : "";
+  const startNote = [finish && `Finish: ${finish}.`, piece && "Tell us what you would like changed."].filter(Boolean).join(" ");
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -72,21 +79,21 @@ export function EnquiryForm() {
       </div>
       <div className="field">
         <label htmlFor="what">What would you like made?</label>
-        <input id="what" name="what" className="input" required minLength={2} maxLength={200} placeholder="e.g. Door frame, dining table" />
+        <input id="what" name="what" className="input" required minLength={2} maxLength={200} defaultValue={startWhat} placeholder="e.g. Door frame, dining table" />
       </div>
       <div className="grid2">
         <div className="field">
           <label htmlFor="wood">Wood preference</label>
-          <input id="wood" name="wood" className="input" maxLength={100} placeholder="Teak, rosewood, not sure" />
+          <input id="wood" name="wood" className="input" maxLength={100} defaultValue={(params.get("wood") ?? "").slice(0, 100)} placeholder="Teak, rosewood, not sure" />
         </div>
         <div className="field">
           <label htmlFor="size">Approx. size (L × W × H, mm)</label>
-          <input id="size" name="size" className="input" maxLength={100} placeholder="e.g. 1200 × 600 × 750" />
+          <input id="size" name="size" className="input" maxLength={100} defaultValue={(params.get("size") ?? "").slice(0, 100)} placeholder="e.g. 1200 × 600 × 750" />
         </div>
       </div>
       <div className="field">
         <label htmlFor="description">Describe your idea</label>
-        <textarea id="description" name="description" className="textarea" required minLength={5} maxLength={2000} placeholder="Style, motifs, where it will be used, anything that matters to you" />
+        <textarea id="description" name="description" className="textarea" required minLength={5} maxLength={2000} defaultValue={startNote} placeholder="Style, motifs, where it will be used, anything that matters to you" />
       </div>
       <div className="field">
         <label htmlFor="budget">Budget (optional)</label>

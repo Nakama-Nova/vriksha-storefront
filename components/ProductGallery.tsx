@@ -1,8 +1,10 @@
 "use client";
 
+import NextImage from "next/image";
 import Script from "next/script";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mediaUrl, type Image } from "@/lib/api";
+import { API_URL } from "@/lib/config";
 import { Photo } from "./Photo";
 
 /**
@@ -13,6 +15,29 @@ import { Photo } from "./Photo";
 export function ProductGallery({ images, modelUrl, name }: { images: Image[]; modelUrl: string | null; name: string }) {
   const [index, setIndex] = useState(0);
   const [show3d, setShow3d] = useState(false);
+  const box = useRef<HTMLDialogElement>(null);
+  const [zoomed, setZoomed] = useState(false);
+  const many = images.length > 1;
+  const step = (d: number) => setIndex((i) => (i + d + images.length) % images.length);
+
+  // Left and right arrows move through the photos while one is enlarged (Escape closes it by itself)
+  useEffect(() => {
+    if (!zoomed) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") step(1);
+      if (e.key === "ArrowLeft") step(-1);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomed, images.length]);
+
+  function openZoom() {
+    box.current?.showModal();
+    setZoomed(true);
+  }
+  const current = images[index];
+  const src = current ? mediaUrl(current.url) : null;
 
   return (
     <div>
@@ -34,8 +59,52 @@ export function ProductGallery({ images, modelUrl, name }: { images: Image[]; mo
         </>
       ) : (
         // Half the page next to the details, the full width once they stack (860px and below)
-        <Photo image={images[index]} name={name} sizes="(max-width: 860px) 100vw, 560px" priority />
+        <div className="zoomable">
+          <Photo image={images[index]} name={name} sizes="(max-width: 860px) 100vw, 560px" priority />
+          {src && (
+            <button type="button" className="zoom-btn" onClick={openZoom} aria-label={`Enlarge photo of ${name}`}>
+              <span aria-hidden="true">⤢</span> Tap to enlarge
+            </button>
+          )}
+        </div>
       )}
+
+      <dialog
+        ref={box}
+        className="lightbox"
+        aria-label={`Photos of ${name}`}
+        onClose={() => setZoomed(false)}
+        onClick={(e) => e.target === box.current && box.current?.close()}
+      >
+        {zoomed && src && (
+          <div className="lightbox-stage">
+            <NextImage
+              src={src}
+              alt={current?.alt || name}
+              fill
+              sizes="100vw"
+              style={{ objectFit: "contain" }}
+              unoptimized={!src.startsWith(`${API_URL}/media/`)}
+            />
+          </div>
+        )}
+        <button type="button" className="lightbox-close" onClick={() => box.current?.close()} aria-label="Close">
+          ✕
+        </button>
+        {many && (
+          <>
+            <button type="button" className="lightbox-nav prev" onClick={() => step(-1)} aria-label="Previous photo">
+              ‹
+            </button>
+            <button type="button" className="lightbox-nav next" onClick={() => step(1)} aria-label="Next photo">
+              ›
+            </button>
+            <p className="lightbox-count" aria-live="polite">
+              {index + 1} / {images.length}
+            </p>
+          </>
+        )}
+      </dialog>
 
       {(images.length > 1 || modelUrl) && (
         <div className="thumbs">
