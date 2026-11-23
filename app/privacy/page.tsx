@@ -41,6 +41,7 @@ export default function PrivacyPage() {
         <li>To confirm your order, price and delivery date, to make your piece and to deliver it.</li>
         <li>To email you about an order you placed on this website, if you gave an email address: when we receive it, when it is confirmed and when we receive a payment. These emails are about your order only; they are not marketing, and you do not need to subscribe to our newsletter to get them.</li>
         <li>To reply to your enquiry or message and to look after you after delivery (for example a defect).</li>
+        <li>To show a comment you chose to send about your order on our website, with the name and town you gave, after we have read and approved it. We use your order number and phone number only to check you are a customer. Ask us and we remove your comment.</li>
         <li>To send you our newsletter (new pieces and Journal posts), if you subscribed. Every email has an unsubscribe link, and we stop as soon as you use it.</li>
         <li>To keep our accounts and records as the law requires.</li>
         <li>To keep the website secure and to stop misuse, such as repeated automated orders.</li>

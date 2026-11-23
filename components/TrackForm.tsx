@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import { ApiError, trackOrder, type PublicOrder } from "@/lib/api";
-import Link from "next/link";
 import { dateText, rupees } from "@/lib/format";
 
 // Order lifecycle (backend): draft -> confirmed -> in_production -> ready -> delivered
@@ -130,6 +130,11 @@ export function TrackForm({ initialNumber = "" }: { initialNumber?: string }) {
             <a className="btn primary" href={order.upi_link} style={{ alignSelf: "flex-start" }}>
               Pay by UPI
             </a>
+          )}
+          {["confirmed", "in_production", "ready", "delivered"].includes(order.status) && (
+            <p>
+              <Link href={`/comment?order=${encodeURIComponent(order.order_number)}`}>Tell us how it went</Link>
+            </p>
           )}
           <p className="small muted">Questions? Call or WhatsApp us and quote your order number.</p>
         </div>

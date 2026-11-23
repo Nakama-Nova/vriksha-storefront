@@ -181,3 +181,27 @@ export const subscribeNewsletter = (email: string, source: NewsletterSource, web
 export const confirmNewsletter = (token: string) => request<{ status: string }>("/public/newsletter/confirm", JSON_POST({ token }));
 
 export const unsubscribeNewsletter = (token: string) => request<{ status: string }>("/public/newsletter/unsubscribe", JSON_POST({ token }));
+
+
+// ---- customer comments (only customers with a confirmed order can send one; staff approve before it shows) ----
+export type PublicComment = { name: string; place: string | null; piece: string | null; text: string };
+
+/** Approved comments for the home page. An empty list when there are none or the backend cannot be reached. */
+export async function getComments(): Promise<PublicComment[]> {
+  try {
+    return await request<PublicComment[]>("/public/comments", REVALIDATE);
+  } catch {
+    return [];
+  }
+}
+
+export type CommentInput = {
+  order_number: string;
+  phone: string;
+  display_name: string;
+  place?: string;
+  text: string;
+  consent: boolean;
+  website: string; // hidden spam trap, stays empty
+};
+export const sendComment = (input: CommentInput) => request<{ status: string }>("/public/comments", JSON_POST(input));

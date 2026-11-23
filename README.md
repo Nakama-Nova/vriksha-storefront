@@ -56,7 +56,7 @@ Merge to `main` and the site deploys with the new post. Posts appear in the list
 
 ### Customer comments
 
-The home page has a "What our customers say" section that appears **only when there is at least one real comment** in `lib/testimonials.ts` (the file explains how to add one). With the list empty, no section is shown. Only add words a customer really wrote or said, with their OK to show them.
+Customers send their own comments at `/comment` (linked from the footer and from the tracking page once an order is confirmed). They must give the order number and the phone it was placed with, the order must be confirmed, and there is one comment per order. **Nothing is shown until staff approve it**: open `<backend address>/comments/review` (for example `https://api2.vrikshastudios.com/comments/review`), sign in with an owner or manager login, and press "Approve and show" or "Hide". Approved comments appear in "What our customers say" on the home page within a minute; with none approved, the section does not show. The backend routes are `/public/comments` (list, send) and `/comments` (staff).
 
 ### Newsletter
 
