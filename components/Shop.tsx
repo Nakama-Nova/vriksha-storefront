@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Product } from "@/lib/api";
 import { rupees } from "@/lib/format";
-import { activeFilterCount, DEFAULT_SORT, distinct, filterAndSort, isSortKey, isTypeKey, legacyType, parseRupees, SORTS, TYPES, type ShopFilters, type TypeKey } from "@/lib/shop";
+import { activeFilterCount, categoryGroup, DEFAULT_SORT, distinct, filterAndSort, isSortKey, isTypeKey, legacyType, parseRupees, SORTS, TYPES, type ShopFilters, type TypeKey } from "@/lib/shop";
 import { ProductCard } from "./ProductCard";
 
 /**
@@ -43,13 +43,13 @@ export function Shop({ products }: { products: Product[] }) {
   }
 
   const sortParam = params.get("sort");
-  const categories = useMemo(() => distinct(products.map((p) => p.category)), [products]);
+  const categories = useMemo(() => distinct(products.map((p) => categoryGroup(p.category))), [products]);
   const typeParam = params.get("type");
   const oldLink = legacyType(params.get("category"), categories);
   const filters: ShopFilters = {
     q,
     type: isTypeKey(typeParam) ? typeParam : oldLink,
-    category: oldLink ? null : params.get("category"),
+    category: oldLink ? null : categoryGroup(params.get("category")),
     wood: params.get("wood"),
     min: parseRupees(params.get("min")),
     max: parseRupees(params.get("max")),

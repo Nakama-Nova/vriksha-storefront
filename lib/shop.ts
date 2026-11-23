@@ -49,6 +49,20 @@ export function parseRupees(v: string | null | undefined): number | null {
 }
 
 const norm = (s: string | null | undefined) => (s ?? "").trim().toLowerCase();
+
+/**
+ * The shop's categories are typed per piece ("King Size Bed", "Queen Size bed"), which would make a filter button for
+ * every size. Shoppers want one: anything whose name ends in "bed" is grouped as "Beds". Other names are left as typed.
+ * (Link addresses with the exact old name, such as ?category=King Size Bed, still work: see categoryMatches.)
+ */
+export function categoryGroup(category: string | null | undefined): string | null {
+  const c = (category ?? "").trim();
+  if (!c) return null;
+  return /\bbeds?$/i.test(c) ? "Beds" : c;
+}
+
+/** True when a piece belongs to the chosen category: its exact category or its group. */
+export const categoryMatches = (p: Product, chosen: string) => norm(p.category) === norm(chosen) || norm(categoryGroup(p.category)) === norm(chosen);
 const priceOf = (p: Product) => Number(p.price) || 0;
 
 /** Ready to ship: in stock and not made to order. */
@@ -69,7 +83,7 @@ export function filterAndSort(products: Product[], f: ShopFilters): Product[] {
   const out = products.filter(
     (p) =>
       (!f.type || p.item_type === f.type) &&
-      (!f.category || norm(p.category) === norm(f.category)) &&
+      (!f.category || categoryMatches(p, f.category)) &&
       (!f.wood || norm(p.wood_type) === norm(f.wood)) &&
       (f.min === null || priceOf(p) >= f.min) &&
       (f.max === null || priceOf(p) <= f.max) &&
