@@ -114,7 +114,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 const REVALIDATE = { next: { revalidate: 60 } } as const;
 const PAGE = 50; // the API's maximum page size
 
-/** Whole catalogue, or null when the backend cannot be reached. */
+// When the shop's server is briefly unreachable (a release restarting it, a hiccup), a page that is rebuilt in that
+// moment must not turn into "could not load" for everyone. So the last catalogue and products that loaded fine are kept
+// in memory and shown instead. (Memory belongs to one running copy of the site; it covers the usual short gaps, and a
+// copy that has never loaded anything still shows the notice.)
+let lastCatalog: Product[] | null = null;
+const lastProducts = new Map<string, Product>();
+
+/** Whole catalogue; the last good one if the backend cannot be reached now; null if there never was one. */
 export async function getCatalog(): Promise<Product[] | null> {
   try {
     const all: Product[] = [];
@@ -123,18 +130,31 @@ export async function getCatalog(): Promise<Product[] | null> {
       all.push(...page);
       if (page.length < PAGE) break;
     }
+    lastCatalog = all;
     return all;
   } catch {
-    return null;
+    return lastCatalog;
   }
 }
 
-/** One product; null if it does not exist (or the backend is down). */
+/**
+ * One product; null only when the server says it does not exist. If the server cannot be reached the last good copy
+ * is used, and with none the error is thrown (the page shows an error and is not cached), so a short outage can never
+ * turn a real product page into a "not found" that lingers.
+ */
 export async function getProduct(slug: string): Promise<Product | null> {
   try {
-    return await request<Product>(`/public/catalog/${encodeURIComponent(slug)}`, REVALIDATE);
-  } catch {
-    return null;
+    const p = await request<Product>(`/public/catalog/${encodeURIComponent(slug)}`, REVALIDATE);
+    lastProducts.set(slug, p);
+    return p;
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 404) {
+      lastProducts.delete(slug);
+      return null;
+    }
+    const kept = lastProducts.get(slug);
+    if (kept) return kept;
+    throw err;
   }
 }
 
