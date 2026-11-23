@@ -5,7 +5,7 @@ import { POLICY } from "@/lib/legal";
 const POINTS = [
   {
     title: "Made in our own workshop",
-    text: "Solid wood, carved by hand. Made to order pieces are built for you.",
+    text: "Solid wood, crafted by our own makers. Made to order pieces are built for you.",
     icon: "M3 21V10l9-6 9 6v11M9 21v-6h6v6",
   },
   {

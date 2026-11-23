@@ -33,7 +33,7 @@ export default async function Home() {
             <span className="eyebrow">Handcrafted wood furniture &amp; carvings</span>
             <h1>Wood that remembers the hands that shaped it.</h1>
             <p className="lead">
-              Solid-wood furniture and carved temple art, made by hand in our own workshop. Choose a piece you love, or tell us what you have in mind and we will build it.
+              Solid-wood furniture and carved temple art, crafted in our own workshop. Choose a piece you love, or tell us what you have in mind and we will build it.
             </p>
             <div className="row">
               <Link href="/shop" className="btn primary">
@@ -96,6 +96,43 @@ export default async function Home() {
           ) : (
             <div className="alert info">New pieces are being photographed. Meanwhile, tell us what you would like made.</div>
           )}
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="workshop">
+        <div className="wrap workshop">
+          <div className="stack" style={{ gap: 16 }}>
+            <span className="eyebrow">Our workshop</span>
+            <h2 id="workshop">Made by a family of wood carvers</h2>
+            <p>
+              Vriksha Studio grew out of a family of wood carvers. Our founder&apos;s grandfather, M. Subramani Achari of Puthur, made quality
+              wooden carving, temple replicas among it. We still hold to that line today, in furniture and carved art from our own workshop.
+            </p>
+            <ul className="tick">
+              <li>You see the price and the making time before you pay anything.</li>
+              <li>Pieces are made to order, so you can ask for another size, wood or finish.</li>
+              <li>Our own team delivers and sets it up.</li>
+            </ul>
+            <div className="row">
+              <Link href="/about" className="btn outline">
+                Read our story
+              </Link>
+              <Link href="/custom" className="btn primary">
+                Ask for a custom piece
+              </Link>
+            </div>
+          </div>
+          {/* TODO owner: put a photo of the workshop and the people in it here (public/workshop/) once taken. */}
+          <figure className="workshop-fig">
+            <Image
+              src="/about/subramani-achary-souvenir-1983.png"
+              alt="A 1983 advertisement: With Best Compliments From Mr. M. Subramani Achary, Puthur. Makers of quality wooden carving (temple replicas)."
+              width={935}
+              height={705}
+              sizes="(max-width: 860px) 100vw, 520px"
+            />
+            <figcaption className="small muted">The family&apos;s own advertisement, Madras, 1983.</figcaption>
+          </figure>
         </div>
       </section>
 
