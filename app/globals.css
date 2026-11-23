@@ -1405,3 +1405,49 @@ model-viewer {
     border-radius: 12px;
   }
 }
+
+
+/* Home: the workshop story beside the family's 1983 advertisement */
+.workshop {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+.workshop-fig {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.workshop-fig img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(58, 27, 4, 0.12);
+}
+.tick {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.tick li {
+  position: relative;
+  padding-left: 28px;
+}
+.tick li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--ok);
+  font-weight: 700;
+}
+@media (max-width: 860px) {
+  .workshop {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
