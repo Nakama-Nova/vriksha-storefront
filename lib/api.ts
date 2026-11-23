@@ -2,6 +2,7 @@
 // Server components call it with caching; the browser calls it fresh.
 
 import { API_URL, SITE_URL } from "./config";
+import { isOvernight, OVERNIGHT_NOTICE } from "./hours";
 
 export type Image = { url: string; alt: string | null };
 
@@ -98,7 +99,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   try {
     res = await fetch(`${API_URL}${path}`, init);
   } catch {
-    throw new ApiError("Cannot reach the shop server. Please try again shortly.", 0);
+    throw new ApiError(isOvernight() ? OVERNIGHT_NOTICE : "Cannot reach the shop server. Please try again shortly.", 0);
   }
   if (!res.ok) {
     let body: unknown = null;

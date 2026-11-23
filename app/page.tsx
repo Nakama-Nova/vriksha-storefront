@@ -7,6 +7,7 @@ import { Testimonials } from "@/components/Testimonials";
 import { TrustPoints } from "@/components/TrustPoints";
 import { getCatalog } from "@/lib/api";
 import { CARVINGS, type Carving } from "@/lib/art";
+import { CATALOGUE_NOTICE } from "@/lib/hours";
 
 export const revalidate = 60;
 
@@ -90,7 +91,7 @@ export default async function Home() {
             </Link>
           </div>
           {products === null ? (
-            <div className="alert info">Our catalogue is loading slowly. Please refresh in a moment, or call us.</div>
+            <div className="alert info">{CATALOGUE_NOTICE}</div>
           ) : featured.length ? (
             <div className="grid-products">
               {featured.map((p) => (
