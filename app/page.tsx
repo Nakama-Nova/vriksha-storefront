@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { NewsletterForm } from "@/components/NewsletterForm";
 import { ProductCard } from "@/components/ProductCard";
+import { Testimonials } from "@/components/Testimonials";
 import { TrustPoints } from "@/components/TrustPoints";
 import { getCatalog } from "@/lib/api";
 import { CARVINGS, type Carving } from "@/lib/art";
@@ -135,6 +136,8 @@ export default async function Home() {
           </figure>
         </div>
       </section>
+
+      <Testimonials />
 
       <section className="section warm" aria-labelledby="how">
         <div className="wrap stack" style={{ gap: 28 }}>
